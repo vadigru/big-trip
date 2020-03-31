@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Vadim Grunenko](https://up.htmlacademy.ru/ecmascript/11/user/507341).
-* Наставник: `Неизвестно`.
+* Наставник: [Анна Тюрина](https://htmlacademy.ru/profile/anntv).
 
 ---
 
