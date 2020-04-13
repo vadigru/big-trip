@@ -1,4 +1,4 @@
-export const createTripDays = () => {
+export const createTripDay = () => {
   return (
     `<ul class="trip-days">
     </ul>`
