@@ -1,14 +1,17 @@
-const waypointTypes = [
-  `Taxi`,
-  `Bus`,
-  `Train`,
-  `Ship`,
-  `Transport`,
-  `Drive`,
-  `Flight`,
-  `Check-in`,
-  `Sightseeing`,
-  `Restaurant`
+const transferTypes = [
+  `taxi`,
+  `bus`,
+  `train`,
+  `ship`,
+  `transport`,
+  `drive`,
+  `flight`,
+];
+
+const activityTypes = [
+  `check-in`,
+  `sightseeing`,
+  `restaurant`
 ];
 
 const cities = [
@@ -86,4 +89,4 @@ const phrases = [
   `In rutrum ac purus sit amet tempus.`,
 ];
 
-export {waypointTypes, cities, options, phrases};
+export {transferTypes, activityTypes, cities, options, phrases};

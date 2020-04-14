@@ -15,9 +15,9 @@ export const shuffleArray = (arr) => {
   return arr;
 };
 
-const castTimeFormat = (value) => {
-  return value < 10 ? `0${value}` : String(value);
-};
+export const capitalizeFirstLetter = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
+
+const castTimeFormat = (value) => value < 10 ? `0${value}` : String(value);
 
 export const parseTime = (date) => {
   date = new Date(date);

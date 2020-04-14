@@ -1,5 +1,5 @@
 import {getRandomArrayItem, getRandomIntegerNumber, shuffleArray} from '../utils.js';
-import {waypointTypes, cities, options, phrases} from '../const.js';
+import {transferTypes, activityTypes, cities, options, phrases} from '../const.js';
 
 const OFFER_COUNT = 5;
 
@@ -34,7 +34,7 @@ const generateWaypoint = () => {
   const start = getRandomDate();
   const end = getRandomDate();
   return {
-    type: getRandomArrayItem(waypointTypes),
+    type: getRandomArrayItem(transferTypes.concat(activityTypes)),
     city: getRandomArrayItem(cities),
     startDate: Math.min(start, end),
     endDate: Math.max(start, end),

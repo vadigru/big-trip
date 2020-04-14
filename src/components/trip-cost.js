@@ -1,16 +1,11 @@
 const getWaypointsCost = (arr) => arr.reduce((acc, it) => acc + it.price, 0);
 
 const getOffersCost = (arr) => {
-  let result = 0;
-  arr
-  .forEach((item) => {
-    for (const offer of item.offers) {
-      if (offer.checked) {
-        result += offer.price;
-      }
-    }
+  let sum = 0;
+  arr.forEach((item) => {
+    sum += item.offers.reduce((acc, it) => it.checked ? acc + it.price : acc, 0);
   });
-  return result;
+  return sum;
 };
 
 export const createTripCost = (waypoints) => {

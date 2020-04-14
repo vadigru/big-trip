@@ -1,26 +1,19 @@
 import {parseTime} from "../utils";
 
 const getDateDiff = (startDate, endDate) => {
-  const firstDate = parseTime(startDate);
-  const secondDate = parseTime(endDate);
-  const getDate = (string) => new Date(0, 0, 0, string.split(`:`)[0], string.split(`:`)[1]);
-  const different = (getDate(secondDate) - getDate(firstDate));
-  let differentRes;
-  let hours;
-  let minuts;
+  let days = Math.floor(((endDate - startDate) / 86400000));
+  let hours = endDate - startDate > 0 ? 0 : 24;
+  hours += Math.floor(((endDate - startDate) % 86400000) / 3600000);
+  let minutes = endDate - startDate > 0 ? 0 : 60;
+  minutes += Math.round((((endDate - startDate) % 86400000) % 3600000) / 60000);
 
-  if (different > 0) {
-    differentRes = different;
-    hours = Math.floor((differentRes % 86400000) / 3600000);
-    minuts = Math.round(((differentRes % 86400000) % 3600000) / 60000);
-  } else {
-    differentRes = Math.abs((getDate(firstDate) - getDate(secondDate)));
-    hours = Math.floor(24 - (differentRes % 86400000) / 3600000);
-    minuts = Math.round(60 - ((differentRes % 86400000) % 3600000) / 60000);
-  }
+  const addZero = (value) => value < 10 ? `0` + value : value;
 
-  let result = hours + `H ` + minuts + `M`;
-  return result;
+  const daysOutput = parseInt(days, 10) !== 0 ? addZero(days) + `D ` : ``;
+  const hoursOutput = parseInt(hours, 10) !== 0 ? addZero(hours) + `H ` : ``;
+  const minutesOutput = parseInt(minutes, 10) !== 0 ? addZero(minutes) + `M` : ``;
+
+  return daysOutput + hoursOutput + minutesOutput;
 };
 
 const tripOffersMarkup = (offers) => {
@@ -53,9 +46,9 @@ export const createWaypoint = ({type, city, startDate, endDate, price, offers}) 
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="${new Date(startDate - timezoneCorrection).toISOString().slice(1, 16)}">${parseTime(startDate)}</time>
+            <time class="event__start-time" datetime="${new Date(startDate - timezoneCorrection).toISOString().slice(0, 16)}">${parseTime(startDate)}</time>
             &mdash;
-            <time class="event__end-time" datetime="${new Date(endDate - timezoneCorrection).toISOString().slice(1, 16)}">${parseTime(endDate)}</time>
+            <time class="event__end-time" datetime="${new Date(endDate - timezoneCorrection).toISOString().slice(0, 16)}">${parseTime(endDate)}</time>
           </p>
           <p class="event__duration">${dateDiff}</p>
         </div>
