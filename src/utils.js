@@ -1,3 +1,8 @@
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`
+};
+
 export const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
@@ -32,13 +37,24 @@ export const parseDate = (timestamp) => {
   return date.getDate() + `/` + (date.getMonth() + 1) + `/` + date.getFullYear().toString().slice(2);
 };
 
-export const createDay = (template) => {
-  const newDay = document.createElement(`span`);
+export const createElement = (template) => {
+  const newDay = document.createElement(`civ`);
   newDay.innerHTML = template;
 
   return newDay.firstChild;
 };
 
-export const render = (container, template, place = `beforeend`) => {
-  container.insertAdjacentHTML(place, template);
+// export const render = (container, template, place = `beforeend`) => {
+//   container.insertAdjacentHTML(place, template);
+// };
+
+export const render = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTERBEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+  }
 };

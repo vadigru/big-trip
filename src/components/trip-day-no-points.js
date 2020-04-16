@@ -1,19 +1,18 @@
-import {createElement} from '../utils.js';
+import {createElement} from "../utils.js";
 
-export const createTripDay = () => {
+const tripDayNoPoint = () => {
   return (
-    `<ul class="trip-days">
-    </ul>`
+    `<p class="trip-events__msg">Click New Event to create your first point</p>`
   );
 };
 
-export default class TripDay {
+export default class Filter {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createTripDay();
+    return tripDayNoPoint();
   }
 
   getElement() {

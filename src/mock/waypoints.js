@@ -1,7 +1,7 @@
 import {getRandomArrayItem, getRandomIntegerNumber, shuffleArray} from '../utils.js';
 import {transferTypes, activityTypes, cities, options, phrases} from '../const.js';
 
-const OFFER_COUNT = 5;
+const OFFER_COUNT = 10;
 
 const getRandomDescription = (arr) =>
   shuffleArray(arr)
