@@ -44,11 +44,7 @@ export const createElement = (template) => {
   return newDay.firstChild;
 };
 
-// export const render = (container, template, place = `beforeend`) => {
-//   container.insertAdjacentHTML(place, template);
-// };
-
-export const render = (container, element, place) => {
+export const render = (container, element, place = RenderPosition.BEFOREEND) => {
   switch (place) {
     case RenderPosition.AFTERBEGIN:
       container.prepend(element);

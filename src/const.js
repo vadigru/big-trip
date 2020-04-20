@@ -1,3 +1,9 @@
+const filters = [
+  `Everything`,
+  `Future`,
+  `Past`
+];
+
 const transferTypes = [
   `taxi`,
   `bus`,
@@ -89,4 +95,4 @@ const phrases = [
   `In rutrum ac purus sit amet tempus.`,
 ];
 
-export {transferTypes, activityTypes, cities, options, phrases};
+export {filters, transferTypes, activityTypes, cities, options, phrases};

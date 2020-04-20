@@ -1,6 +1,6 @@
 import FilterComponent from './components/filter.js';
 import MenuComponent from './components/menu.js';
-import SortElement from './components/sorting.js';
+import SortComponent from './components/sorting.js';
 import TripCostComponent from './components/trip-cost.js';
 import TripDayComponent from './components/trip-day.js';
 import TripDayEntryComponent from './components/trip-day-entry.js';
@@ -15,19 +15,19 @@ const WAYPOINTS_COUNT = 20;
 const waypoints = generateWaypoints(WAYPOINTS_COUNT);
 const tripUniqDates = [...new Set(waypoints.map((it) => new Date(it.startDate).toDateString()))];
 
-const renderDayEntry = (point, tripDayList) => {
+const renderDayEntry = (point, dayListElement) => {
   const waypointComponent = new WaypointComponent(point);
   const waypointEditComponent = new WaypointEditComponent(point);
 
   const replaceWaypointToWaypointEdit = () => {
-    tripDayList.replaceChild(
+    dayListElement.replaceChild(
         waypointEditComponent.getElement(),
         waypointComponent.getElement()
     );
   };
 
   const replaceWaypointEditToWaypoint = () => {
-    tripDayList.replaceChild(
+    dayListElement.replaceChild(
         waypointComponent.getElement(),
         waypointEditComponent.getElement()
     );
@@ -41,18 +41,22 @@ const renderDayEntry = (point, tripDayList) => {
     }
   };
 
-  render(
-      tripDayList,
-      waypointComponent.getElement(),
-      RenderPosition.BEFOREEND
-  );
+  render(dayListElement, waypointComponent.getElement());
 
   waypointComponent
   .getElement()
   .querySelector(`.event__rollup-btn`)
   .addEventListener(`click`, () => {
-    replaceWaypointToWaypointEdit(tripDayList);
+    replaceWaypointToWaypointEdit();
     document.addEventListener(`keydown`, onEscKeyDown);
+  });
+
+  waypointEditComponent
+  .getElement()
+  .querySelector(`.event__rollup-btn`)
+  .addEventListener(`click`, () => {
+    replaceWaypointEditToWaypoint();
+    document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
   waypointEditComponent
@@ -68,14 +72,14 @@ const renderDay = (points, dates) => {
   dates.
   forEach((date, dateIndex) => {
     const day = new TripDayEntryComponent(date, dateIndex + 1).getElement();
-    const tripDayList = day.querySelector(`.trip-events__list`);
+    const dayListElement = day.querySelector(`.trip-events__list`);
     points
     .filter((point) => new Date(point.startDate).toDateString() === date)
     .forEach((point) => {
-      renderDayEntry(point, tripDayList, day);
+      renderDayEntry(point, dayListElement, day);
     });
-    const tripDays = document.querySelector(`.trip-days`);
-    render(tripDays, day, RenderPosition.BEFOREEND);
+    const dayElement = document.querySelector(`.trip-days`);
+    render(dayElement, day);
   }
   );
 };
@@ -84,17 +88,17 @@ const renderTripInfo = (points, dates) => {
   const headerElement = document.querySelector(`.trip-main`);
   render(headerElement, new TripMainInfoComponent().getElement(), RenderPosition.AFTERBEGIN);
 
-  const tripInfo = document.querySelector(`.trip-info`);
-  render(tripInfo, new TripInfoComponent(points, dates).getElement(), RenderPosition.BEFOREEND);
-  render(tripInfo, new TripCostComponent(points).getElement(), RenderPosition.BEFOREEND);
+  const infoElement = document.querySelector(`.trip-info`);
+  render(infoElement, new TripInfoComponent(points, dates).getElement());
+  render(infoElement, new TripCostComponent(points).getElement());
 };
 
-const menu = document.querySelector(`.trip-controls`);
-const tripContent = document.querySelector(`.trip-events`);
-render(menu, new MenuComponent().getElement(), RenderPosition.BEFOREEND);
-render(menu, new FilterComponent().getElement(), RenderPosition.BEFOREEND);
-render(tripContent, new TripDayComponent().getElement(), RenderPosition.BEFOREEND);
-render(tripContent, new SortElement().getElement(), RenderPosition.AFTERBEGIN);
+const menuElement = document.querySelector(`.trip-controls`);
+const eventElement = document.querySelector(`.trip-events`);
+render(menuElement, new MenuComponent().getElement());
+render(menuElement, new FilterComponent().getElement());
+render(eventElement, new TripDayComponent().getElement());
+render(eventElement, new SortComponent().getElement(), RenderPosition.AFTERBEGIN);
 
 renderTripInfo(waypoints, tripUniqDates);
 renderDay(waypoints, tripUniqDates);
