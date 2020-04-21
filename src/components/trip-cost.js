@@ -1,3 +1,5 @@
+import {createElement} from '../utils.js';
+
 const getWaypointsCost = (arr) => arr.reduce((acc, it) => acc + it.price, 0);
 
 const getOffersCost = (arr) => {
@@ -8,11 +10,33 @@ const getOffersCost = (arr) => {
   return sum;
 };
 
-export const createTripCost = (waypoints) => {
+export const createTripCost = (arr) => {
   return (
     `<p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">${getWaypointsCost(waypoints)
-        + getOffersCost(waypoints)}</span>
+      Total: &euro;&nbsp;<span class="trip-info__cost-value">${getWaypointsCost(arr)
+        + getOffersCost(arr)}</span>
     </p>`
   );
 };
+
+export default class TripCost {
+  constructor(point) {
+    this._point = point;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTripCost(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
