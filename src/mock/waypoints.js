@@ -1,4 +1,4 @@
-import {getRandomArrayItem, getRandomIntegerNumber, shuffleArray} from '../utils.js';
+import {getRandomArrayItem, getRandomIntegerNumber, shuffleArray} from '../utils/common.js';
 import {transferTypes, activityTypes, cities, options, phrases} from '../const.js';
 
 const OFFER_COUNT = 10;

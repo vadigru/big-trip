@@ -1,8 +1,3 @@
-export const RenderPosition = {
-  AFTERBEGIN: `afterbegin`,
-  BEFOREEND: `beforeend`
-};
-
 export const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
@@ -35,22 +30,4 @@ export const parseTime = (date) => {
 export const parseDate = (timestamp) => {
   const date = new Date(timestamp);
   return date.getDate() + `/` + (date.getMonth() + 1) + `/` + date.getFullYear().toString().slice(2);
-};
-
-export const createElement = (template) => {
-  const newDay = document.createElement(`civ`);
-  newDay.innerHTML = template;
-
-  return newDay.firstChild;
-};
-
-export const render = (container, element, place = RenderPosition.BEFOREEND) => {
-  switch (place) {
-    case RenderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-  }
 };

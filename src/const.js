@@ -1,9 +1,28 @@
 const filters = [
-  `Everything`,
-  `Future`,
-  `Past`
+  {
+    name: `everything`,
+    checked: true,
+  },
+  {
+    name: `future`,
+    checked: false,
+  },
+  {
+    name: `past`,
+    checked: false,
+  },
 ];
 
+const menuItems = [
+  {
+    name: `table`,
+    checked: true,
+  },
+  {
+    name: `stats`,
+    checked: false,
+  },
+];
 const transferTypes = [
   `taxi`,
   `bus`,
@@ -95,4 +114,4 @@ const phrases = [
   `In rutrum ac purus sit amet tempus.`,
 ];
 
-export {filters, transferTypes, activityTypes, cities, options, phrases};
+export {filters, menuItems, transferTypes, activityTypes, cities, options, phrases};
