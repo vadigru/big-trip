@@ -4,7 +4,7 @@ export const RenderPosition = {
 };
 
 export const createElement = (template) => {
-  const newDay = document.createElement(`civ`);
+  const newDay = document.createElement(`div`);
   newDay.innerHTML = template;
 
   return newDay.firstChild;
@@ -27,7 +27,7 @@ export const replaceElement = (newComponent, oldComponent) => {
   const oldElement = oldComponent.getElement();
   const isExistElements = !!(parentElement && newElement && oldElement);
 
-  if (isExistElements && parentElement.contains(oldElement)) {
+  if (isExistElements) {
     parentElement.replaceChild(newElement, oldElement);
   }
 };

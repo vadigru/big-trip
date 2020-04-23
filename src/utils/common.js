@@ -29,5 +29,5 @@ export const parseTime = (date) => {
 
 export const parseDate = (timestamp) => {
   const date = new Date(timestamp);
-  return date.getDate() + `/` + (date.getMonth() + 1) + `/` + date.getFullYear().toString().slice(2);
+  return `${date.getDate()}/${(date.getMonth() + 1)}/${date.getFullYear().toString().slice(2)}`;
 };

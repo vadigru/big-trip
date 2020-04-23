@@ -56,7 +56,6 @@ export default class Waypoint extends AbstractComponent {
 
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
-
             ${offers
               .filter((offer) => offer.checked)
               .slice(0, 3)

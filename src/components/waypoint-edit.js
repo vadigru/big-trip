@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {transferTypes, activityTypes, cities} from '../const.js';
+import {TRANSFER_TYPES, ACTIVITY_TYPES, CITIES} from '../const.js';
 import {parseDate, parseTime, capitalizeFirstLetter} from '../utils/common.js';
 
 
@@ -24,7 +24,7 @@ export default class WaypointEdit extends AbstractComponent {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Transfer</legend>
-                ${transferTypes
+                ${TRANSFER_TYPES
                   .map((transfer) => {
                     return (
                       `<div class="event__type-item">
@@ -38,7 +38,7 @@ export default class WaypointEdit extends AbstractComponent {
 
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Activity</legend>
-                ${activityTypes
+                ${ACTIVITY_TYPES
                   .map((activity) => {
                     return (
                       `<div class="event__type-item">
@@ -58,7 +58,7 @@ export default class WaypointEdit extends AbstractComponent {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}"list="destination-list-1">
             <datalist id="destination-list-1">
-            ${cities
+            ${CITIES
               .map((it) => {
                 return (
                   `<option value="${it}"></option>`
