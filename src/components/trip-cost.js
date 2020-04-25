@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
 const getWaypointsCost = (arr) => arr.reduce((acc, it) => acc + it.price, 0);
 
@@ -10,33 +10,18 @@ const getOffersCost = (arr) => {
   return sum;
 };
 
-export const createTripCost = (arr) => {
-  return (
-    `<p class="trip-info__cost">
-      Total: &euro;&nbsp;<span class="trip-info__cost-value">${getWaypointsCost(arr)
-        + getOffersCost(arr)}</span>
-    </p>`
-  );
-};
-
-export default class TripCost {
-  constructor(point) {
-    this._point = point;
-    this._element = null;
+export default class TripCost extends AbstractComponent {
+  constructor(points) {
+    super();
+    this._points = points;
   }
 
   getTemplate() {
-    return createTripCost(this._point);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return (
+      `<p class="trip-info__cost">
+        Total: &euro;&nbsp;<span class="trip-info__cost-value">${getWaypointsCost(this._points)
+          + getOffersCost(this._points)}</span>
+      </p>`
+    );
   }
 }

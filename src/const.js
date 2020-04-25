@@ -1,10 +1,29 @@
-const filters = [
-  `Everything`,
-  `Future`,
-  `Past`
+const FILTERS = [
+  {
+    name: `everything`,
+    checked: true,
+  },
+  {
+    name: `future`,
+    checked: false,
+  },
+  {
+    name: `past`,
+    checked: false,
+  },
 ];
 
-const transferTypes = [
+const MENU_ITEMS = [
+  {
+    name: `table`,
+    checked: true,
+  },
+  {
+    name: `stats`,
+    checked: false,
+  },
+];
+const TRANSFER_TYPES = [
   `taxi`,
   `bus`,
   `train`,
@@ -14,13 +33,13 @@ const transferTypes = [
   `flight`,
 ];
 
-const activityTypes = [
+const ACTIVITY_TYPES = [
   `check-in`,
   `sightseeing`,
   `restaurant`
 ];
 
-const cities = [
+const CITIES = [
   `Amsterdam`,
   `Geneva`,
   `Chamonix`,
@@ -30,58 +49,58 @@ const cities = [
   `Atlanta`,
 ];
 
-const options = [
+const OPTIONS = [
   {
     name: `Add luggage`,
     type: `luggage`,
     price: 30,
-    checked: Math.random() > 0.5,
+    checked: false,
   },
   {
     name: `Switch to comfort`,
     type: `comfort`,
     price: 100,
-    checked: Math.random() > 0.5,
+    checked: false,
   },
   {
     name: `Add meal`,
     type: `meal`,
     price: 15,
-    checked: Math.random() > 0.5,
+    checked: false,
   },
   {
     name: `Choose seats`,
     type: `seats`,
     price: 5,
-    checked: Math.random() > 0.5,
+    checked: false,
   },
   {
     name: `Trevel by train`,
     type: `train`,
     price: 40,
-    checked: Math.random() > 0.5,
+    checked: false,
   },
   {
     name: `Get escort`,
     type: `escort`,
     price: 75,
-    checked: Math.random() > 0.5,
+    checked: false,
   },
   {
     name: `Hire a guide`,
     type: `guide`,
     price: 50,
-    checked: Math.random() > 0.5,
+    checked: false,
   },
   {
     name: `Sleep all day`,
     type: `sleep`,
     price: 0,
-    checked: Math.random() > 0.5,
+    checked: false,
   },
 ];
 
-const phrases = [
+const PHRASES = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
   `Cras aliquet varius magna, non porta ligula feugiat eget.`,
   `Fusce tristique felis at fermentum pharetra.`,
@@ -95,4 +114,4 @@ const phrases = [
   `In rutrum ac purus sit amet tempus.`,
 ];
 
-export {filters, transferTypes, activityTypes, cities, options, phrases};
+export {FILTERS, MENU_ITEMS, TRANSFER_TYPES, ACTIVITY_TYPES, CITIES, OPTIONS, PHRASES};

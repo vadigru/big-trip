@@ -1,31 +1,27 @@
-import {createElement} from "../utils.js";
+import AbstractComponent from './abstract-component.js';
+import {capitalizeFirstLetter} from '../utils/common.js';
 
-const createMenu = () => {
-  return (
-    `<nav class="trip-controls__trip-tabs  trip-tabs">
-      <a class="trip-tabs__btn  trip-tabs__btn--active" href="#">Table</a>
-      <a class="trip-tabs__btn" href="#">Stats</a>
-    </nav>`
-  );
-};
-
-export default class Menu {
-  constructor() {
-    this._element = null;
+export default class Menu extends AbstractComponent {
+  constructor(menuItems) {
+    super();
+    this.menuItems = menuItems;
   }
 
   getTemplate() {
-    return createMenu();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return (
+      `<nav class="trip-controls__trip-tabs  trip-tabs">
+        ${this.menuItems
+            .map((menuItem) => {
+              return (
+                `<a
+                class="trip-tabs__btn  ${menuItem.checked && `trip-tabs__btn--active`}"
+                href="#">
+                ${capitalizeFirstLetter(menuItem.name)}
+                </a>
+                `);
+            }).join(``)
+      }
+      </nav>`
+    );
   }
 }

@@ -1,42 +1,32 @@
-import {createElement} from '../utils.js';
+import AbstractComponent from './abstract-component.js';
 
-const createTripDayEntry = (date, dateIndex) => {
-  return (
-    `<li class="trip-days__item  day">
-        <div class="day__info">
-          <span class="day__counter">${dateIndex}</span>
-          <time class="day__date" datetime="${date}">${new Date(date).toLocaleString(`en-US`, {
-      month: `short`,
-      day: `numeric`
-    })}</time>
-        </div>
-
-        <ul class="trip-events__list">
-
-        </ul>
-      </li>`
-  );
-};
-
-export default class TripCost {
+export default class TripCost extends AbstractComponent {
   constructor(date, dateIndex) {
+    super();
     this._date = date;
     this._dateIndex = dateIndex;
-    this._element = null;
   }
 
   getTemplate() {
-    return createTripDayEntry(this._date, this._dateIndex);
-  }
+    return (
+      `<li class="trip-days__item  day">
+          <div class="day__info">
+            <span class="day__counter">
+              ${this._dateIndex || ``}
+            </span>
+            <time
+              class="day__date"
+              datetime="${this._date || ``}">
+              ${(this._date && new Date(this._date).toLocaleString(`en-US`, {
+        month: `short`,
+        day: `numeric`
+      })) || ``}
+            </timeclass="day__date">
+          </div>
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+          <ul class="trip-events__list">
+          </ul>
+        </li>`
+    );
   }
 }

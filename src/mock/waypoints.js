@@ -1,11 +1,11 @@
-import {getRandomArrayItem, getRandomIntegerNumber, shuffleArray} from '../utils.js';
-import {transferTypes, activityTypes, cities, options, phrases} from '../const.js';
+import {getRandomArrayItem, getRandomIntegerNumber, shuffleArray} from '../utils/common.js';
+import {TRANSFER_TYPES, ACTIVITY_TYPES, CITIES, OPTIONS, PHRASES} from '../const.js';
 
 const OFFER_COUNT = 10;
 
 const getRandomDescription = (arr) =>
   shuffleArray(arr)
-    .slice(0, getRandomIntegerNumber(1, phrases.length))
+    .slice(0, getRandomIntegerNumber(1, PHRASES.length))
     .join(` `);
 
 const getRandomPhoto = () => `http://picsum.photos/248/152?r=${Math.random()}`;
@@ -28,19 +28,27 @@ const getRandomDate = () => {
   return date;
 };
 
+const getRandomChecked = (arr) => {
+  arr
+  .forEach((item) => {
+    item.checked = Math.random() > 0.5;
+  });
+  return arr;
+};
+
 const generateWaypoint = () => {
   const MIN_PRICE = 50;
   const MAX_PRICE = 100;
   const start = getRandomDate();
   const end = getRandomDate();
   return {
-    type: getRandomArrayItem(transferTypes.concat(activityTypes)),
-    city: getRandomArrayItem(cities),
+    type: getRandomArrayItem(TRANSFER_TYPES.concat(ACTIVITY_TYPES)),
+    city: getRandomArrayItem(CITIES),
     startDate: Math.min(start, end),
     endDate: Math.max(start, end),
     price: getRandomIntegerNumber(MIN_PRICE, MAX_PRICE),
-    offers: shuffleArray(options).slice(0, getRandomIntegerNumber(0, OFFER_COUNT)),
-    description: getRandomDescription(phrases),
+    offers: shuffleArray(getRandomChecked(OPTIONS)).slice(0, getRandomIntegerNumber(0, OFFER_COUNT)),
+    description: getRandomDescription(PHRASES),
     photos: Array(5)
       .fill(``)
       .map(getRandomPhoto),
