@@ -1,23 +1,32 @@
-import AbstractComponent from './abstract-component.js';
+import AbstractSmartComponent from './abstract-smart-component.js';
 import {TRANSFER_TYPES, ACTIVITY_TYPES, CITIES} from '../const.js';
 import {parseDate, parseTime, capitalizeFirstLetter} from '../utils/common.js';
+import {getRandomOffers, getDescription, getPhotos} from '../mock/waypoints.js';
 
-
-export default class WaypointEdit extends AbstractComponent {
+export default class WaypointEdit extends AbstractSmartComponent {
   constructor(point) {
     super();
     this._point = point;
+    this._type = this._point.type;
+    this._city = this._point.city;
+    this._description = this._point.description;
+    this._photos = this._point.photos;
+    this._isFavorite = this._point.isFavorite;
+    this._offers = this._point.offers;
+    this._clickHandler = null;
+    this._saveButtonClickHandler = null;
+    this._favoriteClickHandler = null;
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
-    const {type, city, startDate, endDate, price, offers, description, photos} = this._point;
     return (
       `<form class="trip-events__item  event  event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -54,9 +63,9 @@ export default class WaypointEdit extends AbstractComponent {
 
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              ${capitalizeFirstLetter(type)} to
+              ${capitalizeFirstLetter(this._type)} to
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}"list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${this._city}"list="destination-list-1">
             <datalist id="destination-list-1">
             ${CITIES
               .map((it) => {
@@ -71,12 +80,12 @@ export default class WaypointEdit extends AbstractComponent {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${parseDate(startDate)} ${parseTime(startDate)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${parseDate(this._point.startDate)} ${parseTime(this._point.startDate)}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${parseDate(endDate)} ${parseTime(endDate)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${parseDate(this._point.endDate)} ${parseTime(this._point.endDate)}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -84,13 +93,13 @@ export default class WaypointEdit extends AbstractComponent {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${this._point.price}">
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
           <button class="event__reset-btn" type="reset">Delete</button>
 
-          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" checked>
+          <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite && `checked`}>
             <label class="event__favorite-btn" for="event-favorite-1">
               <span class="visually-hidden">Add to favorite</span>
               <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -103,11 +112,11 @@ export default class WaypointEdit extends AbstractComponent {
           </button>
         </header>
         <section class="event__details">
-          <section class="event__section  event__section--offers" ${offers.length === 0 ? `style ="display: none;"` : ``}>
+          <section class="event__section  event__section--offers" ${this._offers.length === 0 ? `style ="display: none;"` : ``}>
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
-              ${offers
+              ${this._offers
                 .map((offer) => {
                   return (
                     `<div class="event__offer-selector">
@@ -127,11 +136,11 @@ export default class WaypointEdit extends AbstractComponent {
           <section class="event__section  event__section--destination">
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">
-              ${description}
+              ${this._description}
             </p>
             <div class="event__photos-container">
               <div class="event__photos-tape">
-              ${photos
+              ${this._photos
                 .map((photo) => {
                   return (
                     `<img
@@ -150,15 +159,68 @@ export default class WaypointEdit extends AbstractComponent {
     );
   }
 
+  rerender() {
+    super.rerender();
+  }
+
+  reset() {
+    const point = this._point;
+
+    this._type = point.type;
+    this._city = point.city;
+    this._offers = point.offers;
+    this._description = point.description;
+    this._photos = point.photos;
+
+    this.rerender();
+  }
+
+  recoveryListeners() {
+    this.setClickHandler(this._clickHandler);
+    this.setSaveButtonClickHandler(this._saveButtonClickHandler);
+    this.setFavoriteClickHandler(this._favoriteClickHandler);
+    this._subscribeOnEvents();
+  }
+
   setClickHandler(handler) {
     this.getElement()
     .querySelector(`.event__rollup-btn`)
     .addEventListener(`click`, handler);
+    this._clickHandler = handler;
   }
 
-  setClickSaveButtonHandler(handler) {
+  setSaveButtonClickHandler(handler) {
     this.getElement()
     .querySelector(`.event__save-btn`)
     .addEventListener(`click`, handler);
+    this._saveButtonClickHandler = handler;
+  }
+
+  setFavoriteClickHandler(handler) {
+    this.getElement()
+    .querySelector(`.event__favorite-icon`)
+    .addEventListener(`click`, handler);
+    this._favoriteClickHandler = handler;
+  }
+
+  _subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.event__type-list`)
+      .addEventListener(`click`, (evt) => {
+        if (evt.target.tagName === `INPUT`) {
+          this._type = evt.target.value;
+          this._offers = getRandomOffers();
+          this.rerender();
+        }
+      });
+
+    element.querySelector(`.event__input--destination`)
+      .addEventListener(`change`, (evt) => {
+        this._city = evt.target.value;
+        this._description = getDescription();
+        this._photos = getPhotos();
+        this.rerender();
+      });
   }
 }
