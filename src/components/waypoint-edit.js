@@ -1,7 +1,12 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {TRANSFER_TYPES, ACTIVITY_TYPES, CITIES} from '../const.js';
-import {parseDate, parseTime, capitalizeFirstLetter} from '../utils/common.js';
+import {capitalizeFirstLetter} from '../utils/common.js';
 import {getRandomOffers, getDescription, getPhotos} from '../mock/waypoints.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/material_blue.css';
+
 
 export default class WaypointEdit extends AbstractSmartComponent {
   constructor(point) {
@@ -13,9 +18,13 @@ export default class WaypointEdit extends AbstractSmartComponent {
     this._photos = this._point.photos;
     this._isFavorite = this._point.isFavorite;
     this._offers = this._point.offers;
+    this._flatpickrStartDate = null;
+    this._flatpickrEndDate = null;
     this._clickHandler = null;
     this._saveButtonClickHandler = null;
     this._favoriteClickHandler = null;
+
+    this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
@@ -80,12 +89,12 @@ export default class WaypointEdit extends AbstractSmartComponent {
             <label class="visually-hidden" for="event-start-time-1">
               From
             </label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${parseDate(this._point.startDate)} ${parseTime(this._point.startDate)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${this._point.startDate}">
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">
               To
             </label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${parseDate(this._point.endDate)} ${parseTime(this._point.endDate)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${this._point.endDate}">
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -161,6 +170,7 @@ export default class WaypointEdit extends AbstractSmartComponent {
 
   rerender() {
     super.rerender();
+    this._applyFlatpickr();
   }
 
   reset() {
@@ -201,6 +211,34 @@ export default class WaypointEdit extends AbstractSmartComponent {
     .querySelector(`.event__favorite-icon`)
     .addEventListener(`click`, handler);
     this._favoriteClickHandler = handler;
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickrStartDate || this._flatpickrEndDate) {
+      this._flatpickrStartDate.destroy();
+      this._flatpickrEndDate.destroy();
+      this._flatpickrStartDate = null;
+      this._flatpickrEndDate = null;
+    }
+
+    const startDateElement = this.getElement().querySelector(`input[name="event-start-time"]`);
+    const endDateElement = this.getElement().querySelector(`input[name="event-end-time"]`);
+
+    const flatpickrOpt = {
+      allowInput: true,
+      enableTime: true,
+      dateFormat: `d/m/y H:i`,
+    };
+
+    this._flatpickrStartDate = flatpickr(
+        startDateElement,
+        Object.assign({}, flatpickrOpt, {defaultDate: this._point.startDate})
+    );
+
+    this._flatpickrEndDate = flatpickr(
+        endDateElement,
+        Object.assign({}, flatpickrOpt, {defaultDate: this._point.endDate})
+    );
   }
 
   _subscribeOnEvents() {
