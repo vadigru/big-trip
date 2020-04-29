@@ -2,6 +2,9 @@ import {getRandomArrayItem, getRandomIntegerNumber, shuffleArray} from '../utils
 import {TRANSFER_TYPES, ACTIVITY_TYPES, CITIES, OPTIONS, PHRASES} from '../const.js';
 
 const OFFER_COUNT = 10;
+const getRandomOffers = () => shuffleArray(getRandomChecked(OPTIONS)).slice(0, getRandomIntegerNumber(0, OFFER_COUNT));
+const getDescription = () => getRandomDescription(PHRASES);
+const getPhotos = () => Array(5).fill(``).map(getRandomPhoto);
 
 const getRandomDescription = (arr) =>
   shuffleArray(arr)
@@ -47,11 +50,10 @@ const generateWaypoint = () => {
     startDate: Math.min(start, end),
     endDate: Math.max(start, end),
     price: getRandomIntegerNumber(MIN_PRICE, MAX_PRICE),
-    offers: shuffleArray(getRandomChecked(OPTIONS)).slice(0, getRandomIntegerNumber(0, OFFER_COUNT)),
-    description: getRandomDescription(PHRASES),
-    photos: Array(5)
-      .fill(``)
-      .map(getRandomPhoto),
+    offers: getRandomOffers(),
+    description: getDescription(),
+    photos: getPhotos(),
+    isFavorite: false,
   };
 };
 
@@ -62,5 +64,5 @@ const generateWaypoints = (count) => {
   .sort((a, b) => a.startDate - b.startDate);
 };
 
-export {generateWaypoint, generateWaypoints};
+export {generateWaypoint, generateWaypoints, getRandomOffers, getDescription, getPhotos};
 

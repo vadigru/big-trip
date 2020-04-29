@@ -1,3 +1,8 @@
+export const Mode = {
+  DEFAULT: `default`,
+  EDIT: `edit`
+};
+
 const FILTERS = [
   {
     name: `everything`,
