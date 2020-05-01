@@ -66,7 +66,6 @@ export default class PointController {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
     if (isEscKey) {
       this._replaceWaypointEditToWaypoint();
-      document.removeEventListener(`keydown`, this._onEscKeyDown);
     }
   }
 
