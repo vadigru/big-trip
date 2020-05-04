@@ -1,10 +1,12 @@
+import moment from "moment";
+
 export const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
-export const getRandomArrayItem = (array) => {
-  const randomIndex = getRandomIntegerNumber(0, array.length);
-  return array[randomIndex];
+export const getRandomArrayItem = (arr) => {
+  const randomIndex = getRandomIntegerNumber(0, arr.length);
+  return arr[randomIndex];
 };
 
 export const shuffleArray = (arr) => {
@@ -17,17 +19,10 @@ export const shuffleArray = (arr) => {
 
 export const capitalizeFirstLetter = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
 
-const castTimeFormat = (value) => value < 10 ? `0${value}` : String(value);
-
 export const parseTime = (date) => {
-  date = new Date(date);
-  const hours = castTimeFormat(date.getHours());
-  const minutes = castTimeFormat(date.getMinutes());
-
-  return `${hours}:${minutes}`;
+  return moment(date).format(`HH:MM`);
 };
 
-export const parseDate = (timestamp) => {
-  const date = new Date(timestamp);
-  return `${date.getDate()}/${(date.getMonth() + 1)}/${date.getFullYear().toString().slice(2)}`;
+export const parseDate = (date) => {
+  return moment(date).format(`MMM DD`);
 };
