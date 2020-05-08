@@ -4,7 +4,7 @@ export const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
-export const getRandomArrayItem = (arr) => {
+export const getRandomArrayItems = (arr) => {
   const randomIndex = getRandomIntegerNumber(0, arr.length);
   return arr[randomIndex];
 };
@@ -20,9 +20,38 @@ export const shuffleArray = (arr) => {
 export const capitalizeFirstLetter = ([initial, ...rest]) => [initial.toUpperCase(), ...rest].join(``);
 
 export const parseTime = (date) => {
-  return moment(date).format(`HH:MM`);
+  return moment(date).format(`HH:mm`);
 };
 
 export const parseDate = (date) => {
-  return moment(date).format(`MMM DD`);
+  return moment(date).format(`DD MMM`);
+};
+
+const getWaypointsCost = (arr) => arr.reduce((acc, it) => parseInt(acc, 10) + parseInt(it.price, 10), 0);
+
+const getOffersCost = (arr) => {
+  let sum = 0;
+  arr.forEach((item) => {
+    sum += item.offers.reduce((acc, it) => it.checked ? parseInt(acc, 10) + parseInt(it.price, 10) : parseInt(acc, 10), 0);
+  });
+  return sum;
+};
+
+export const getFullPrice = (arr) => {
+  const totalCostElement = document.querySelector(`.trip-info__cost-value`);
+  totalCostElement.textContent = getWaypointsCost(arr) + getOffersCost(arr);
+};
+
+export const disableComponent = (className) => {
+  const component = document.querySelector(`.${className}`);
+  if (!component.getAttribute(`disabled`)) {
+    component.setAttribute(`disabled`, `disabled`);
+  }
+};
+
+export const enableComponent = (className) => {
+  const component = document.querySelector(`.${className}`);
+  if (component.getAttribute(`disabled`)) {
+    component.removeAttribute(`disabled`);
+  }
 };

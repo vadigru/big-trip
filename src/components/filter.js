@@ -1,5 +1,11 @@
 import AbstractComponent from './abstract-component.js';
 
+const FILTER_ID_PREFIX = `filter_`;
+
+const getFilterNameById = (id) => {
+  return id.substring(FILTER_ID_PREFIX.length);
+};
+
 export default class Filter extends AbstractComponent {
   constructor(filters) {
     super();
@@ -32,5 +38,12 @@ export default class Filter extends AbstractComponent {
         <button class="visually-hidden" type="submit">Accept filter</button>
       </form>`
     );
+  }
+
+  setFilterChangeHandler(handler) {
+    this.getElement().addEventListener(`change`, (evt) => {
+      const filterName = getFilterNameById(evt.target.id);
+      handler(filterName);
+    });
   }
 }
