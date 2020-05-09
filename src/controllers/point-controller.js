@@ -1,7 +1,8 @@
 import WaypointComponent from '../components/waypoint.js';
 import WaypointEditComponent from '../components/waypoint-edit.js';
-import {renderElement, replaceElement} from '../utils/render.js';
+import {renderElement, replaceElement, remove, RenderPosition} from '../utils/render.js';
 import {Mode} from '../const.js';
+import {EmptyPoint} from "../mock/waypoints.js";
 
 export default class PointController {
   constructor(container, onDataChange, onViewChange) {
@@ -14,9 +15,10 @@ export default class PointController {
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
-  render(point) {
+  render(point, mode) {
     const oldWaypointComponent = this._waypointComponent;
     const oldWaypointEditComponent = this._waypointEditComponent;
+    this._mode = mode;
 
     this._waypointComponent = new WaypointComponent(point);
     this._waypointEditComponent = new WaypointEditComponent(point);
@@ -32,20 +34,39 @@ export default class PointController {
 
     this._waypointEditComponent.setSaveButtonClickHandler((evt)=> {
       evt.preventDefault();
-      this._replaceWaypointEditToWaypoint();
+      const data = this._waypointEditComponent.getData();
+      this._onDataChange(this, point, data);
     });
 
-    this._waypointEditComponent.setFavoriteClickHandler(() => {
-      this._onDataChange(this, point, Object.assign({}, point, {
-        isFavorite: !point.isFavorite,
-      }));
+    this._waypointEditComponent.setDeleteButtonClickHandler(() => {
+      this._onDataChange(this, point, null);
     });
 
-    if (oldWaypointComponent && oldWaypointEditComponent) {
-      replaceElement(this._waypointComponent, oldWaypointComponent);
-      replaceElement(this._waypointEditComponent, oldWaypointEditComponent);
-    } else {
-      renderElement(this._container, this._waypointComponent);
+    switch (mode) {
+      case Mode.DEFAULT:
+        if (oldWaypointEditComponent && oldWaypointComponent) {
+          replaceElement(this._waypointComponent, oldWaypointComponent);
+          replaceElement(this._waypointEditComponent, oldWaypointEditComponent);
+          this._replaceWaypointEditToWaypoint();
+        } else {
+          renderElement(
+              this._container,
+              this._waypointComponent
+          );
+        }
+        break;
+      case Mode.ADDING:
+        if (oldWaypointEditComponent && oldWaypointComponent) {
+          remove(oldWaypointComponent);
+          remove(oldWaypointEditComponent);
+        }
+        document.addEventListener(`keydown`, this._onEscKeyDown);
+        renderElement(
+            this._container,
+            this._waypointEditComponent,
+            RenderPosition.AFTERBEGIN
+        );
+        break;
     }
   }
 
@@ -65,6 +86,9 @@ export default class PointController {
   _onEscKeyDown(evt) {
     const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
     if (isEscKey) {
+      if (this._mode === Mode.ADDING) {
+        this._onDataChange(this, EmptyPoint, null);
+      }
       this._replaceWaypointEditToWaypoint();
     }
   }
@@ -73,5 +97,11 @@ export default class PointController {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceWaypointEditToWaypoint();
     }
+  }
+
+  destroy() {
+    remove(this._waypointEditComponent);
+    remove(this._waypointComponent);
+    document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 }

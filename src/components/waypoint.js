@@ -1,5 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import {parseTime, capitalizeFirstLetter} from '../utils/common.js';
+import {PointTypeToPretext} from '../const.js';
 
 const timezoneCorrection = new Date().getTimezoneOffset() * 60 * 1000;
 
@@ -33,7 +34,7 @@ export default class Waypoint extends AbstractComponent {
           <div class="event__type">
             <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
           </div>
-          <h3 class="event__title">${capitalizeFirstLetter(type)} to ${city}</h3>
+          <h3 class="event__title">${capitalizeFirstLetter(type)} ${PointTypeToPretext[type]} ${city}</h3>
 
           <div class="event__schedule">
             <p class="event__time">
@@ -47,7 +48,7 @@ export default class Waypoint extends AbstractComponent {
                 ${parseTime(endDate)}
               </time>
             </p>
-            <p class="event__duration">${getDateDiff(startDate, endDate)}</p>
+            <p class="event__duration">${startDate === endDate ? `0D 0H 0M` : getDateDiff(startDate, endDate)}</p>
           </div>
 
           <p class="event__price">

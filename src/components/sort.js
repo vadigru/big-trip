@@ -1,12 +1,7 @@
 import AbstractComponent from './abstract-component.js';
+import {SortType} from '../const.js';
 
-export const SortType = {
-  DEFAULT: `sort-event`,
-  TIME: `sort-time`,
-  PRICE: `sort-price`,
-};
-
-export default class TripCost extends AbstractComponent {
+export default class TripSort extends AbstractComponent {
   constructor() {
     super();
     this._currentSortType = SortType.DEFAULT;
@@ -24,7 +19,7 @@ export default class TripCost extends AbstractComponent {
             name="trip-sort"
             value="sort-event"
             data-sort-type="${SortType.DEFAULT}"
-            checked>
+            >
           <label class="trip-sort__btn" for="sort-event">Event</label>
         </div>
 
@@ -69,6 +64,10 @@ export default class TripCost extends AbstractComponent {
     return this._currentSortType;
   }
 
+  setSortType(sortType) {
+    this._currentSortType = sortType;
+  }
+
   setSortTypeChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       if (evt.target.tagName !== `INPUT`) {
@@ -82,7 +81,6 @@ export default class TripCost extends AbstractComponent {
       }
 
       this._currentSortType = sortType;
-
       handler(this._currentSortType);
     });
   }

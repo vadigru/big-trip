@@ -1,6 +1,32 @@
+export const PointTypeToPretext = {
+  "taxi": `to`,
+  "bus": `to`,
+  "train": `to`,
+  "ship": `to`,
+  "transport": `to`,
+  "drive": `to`,
+  "flight": `to`,
+  "check-in": `in`,
+  "sightseeing": `in`,
+  "restaurant": `in`
+};
+
+export const SortType = {
+  DEFAULT: `sort-event`,
+  TIME: `sort-time`,
+  PRICE: `sort-price`,
+};
+
 export const Mode = {
   DEFAULT: `default`,
-  EDIT: `edit`
+  EDIT: `edit`,
+  ADDING: `adding`
+};
+
+export const FilterType = {
+  EVERYTHING: `everything`,
+  FUTURE: `future`,
+  PAST: `past`
 };
 
 const FILTERS = [
@@ -28,6 +54,7 @@ const MENU_ITEMS = [
     checked: false,
   },
 ];
+
 const TRANSFER_TYPES = [
   `taxi`,
   `bus`,
@@ -47,11 +74,10 @@ const ACTIVITY_TYPES = [
 const CITIES = [
   `Amsterdam`,
   `Geneva`,
-  `Chamonix`,
   `Saint Petersburg`,
-  `Tokyo`,
-  `Twin Peaks`,
   `Atlanta`,
+  `Twin Peaks`,
+  `Tokyo`
 ];
 
 const OPTIONS = [

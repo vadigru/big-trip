@@ -1,4 +1,4 @@
-import {getRandomArrayItem, getRandomIntegerNumber, shuffleArray} from '../utils/common.js';
+import {getRandomArrayItems, getRandomIntegerNumber, shuffleArray} from '../utils/common.js';
 import {TRANSFER_TYPES, ACTIVITY_TYPES, CITIES, OPTIONS, PHRASES} from '../const.js';
 
 const OFFER_COUNT = 10;
@@ -18,7 +18,7 @@ const getRandomDate = () => {
   const END_HOUR = 23;
   const START_MINUTE = 1;
   const END_MINUTE = 59;
-  const MIN_TRIP_DAYS = 2;
+  const MIN_TRIP_DAYS = -5;
   const MAX_TRIP_DURATION = 20;
   const MAX_TRIP_DAYS = getRandomIntegerNumber(0, MAX_TRIP_DURATION);
   const hours = START_HOUR + Math.random() * (END_HOUR - START_HOUR) | 0;
@@ -45,15 +45,16 @@ const generateWaypoint = () => {
   const start = getRandomDate();
   const end = getRandomDate();
   return {
-    type: getRandomArrayItem(TRANSFER_TYPES.concat(ACTIVITY_TYPES)),
-    city: getRandomArrayItem(CITIES),
+    id: String(Date.now() + Math.random()),
+    type: getRandomArrayItems(TRANSFER_TYPES.concat(ACTIVITY_TYPES)),
+    city: getRandomArrayItems(CITIES),
     startDate: Math.min(start, end),
     endDate: Math.max(start, end),
     price: getRandomIntegerNumber(MIN_PRICE, MAX_PRICE),
     offers: getRandomOffers(),
     description: getDescription(),
     photos: getPhotos(),
-    isFavorite: false,
+    isFavorite: Math.random() < 0.5,
   };
 };
 
@@ -64,5 +65,19 @@ const generateWaypoints = (count) => {
   .sort((a, b) => a.startDate - b.startDate);
 };
 
-export {generateWaypoint, generateWaypoints, getRandomOffers, getDescription, getPhotos};
+const EmptyPoint = {
+  id: String(Date.now() + Math.random()),
+  type: `taxi`,
+  city: ``,
+  startDate: Date.now(),
+  endDate: Date.now(),
+  price: 0,
+  offers: [],
+  description: ``,
+  photos: [],
+  isFavorite: false,
+  isNew: true
+};
+
+export {generateWaypoint, generateWaypoints, getRandomOffers, getDescription, getPhotos, EmptyPoint};
 
