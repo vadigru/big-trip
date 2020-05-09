@@ -341,6 +341,8 @@ export default class WaypointEdit extends AbstractSmartComponent {
           this._photos = getPhotos();
         }
         this._validate(evt.target.name, this._smartCity);
+
+        this.rerender();
       });
 
     element.querySelector(`#event-start-time-1`)
@@ -362,6 +364,16 @@ export default class WaypointEdit extends AbstractSmartComponent {
         this._validate(evt.target.name, this._smartPrice);
         this.rerender();
       });
+
+    element.querySelector(`.event__input--price`)
+    .addEventListener(`input`, (evt) => {
+      const outputElement = element.querySelector(`.event__input--price`);
+      this._smartPrice = encode(evt.target.value);
+      if (!this._smartPrice.match(/[^0-9]/g)) {
+        return;
+      }
+      outputElement.value = this._smartPrice.replace((/[^0-9]/g), ``);
+    });
 
     if (!this._isNew) {
       element.querySelector(`.event__favorite-checkbox`)

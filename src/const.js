@@ -74,7 +74,10 @@ const ACTIVITY_TYPES = [
 const CITIES = [
   `Amsterdam`,
   `Geneva`,
-
+  `Saint Petersburg`,
+  `Atlanta`,
+  `Twin Peaks`,
+  `Tokyo`
 ];
 
 const OPTIONS = [
