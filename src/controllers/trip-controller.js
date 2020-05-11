@@ -50,10 +50,11 @@ export default class TripController {
     this._onViewChange = this._onViewChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
     this._pointsModel.setFilterChangeHandler(this._onFilterChange);
-    this._noWaypointComponent = new NoWaypointComponent();
+    this._noWaypointComponent = null;
     this._creatingPoint = null;
     this._isDefaultSort = true;
     this._currentSortType = SortType.DEFAULT;
+    this._eventElement = document.querySelector(`.trip-events`);
   }
 
 
@@ -61,18 +62,19 @@ export default class TripController {
     if (this._creatingPoint) {
       return;
     }
-
     this._creatingPoint = new PointController(
         this._container.getElement(),
         this._onDataChange,
         this._onViewChange
     );
 
+    this._sortComponent.show();
+    this._creatingPoint.render(EmptyPoint, Mode.ADDING);
     if (this._noWaypointComponent) {
       remove(this._noWaypointComponent);
+      this._noWaypointComponent = null;
     }
 
-    this._creatingPoint.render(EmptyPoint, Mode.ADDING);
     this._onViewChange();
   }
 
@@ -87,6 +89,45 @@ export default class TripController {
     );
   }
 
+  hide() {
+    this._container.hide();
+    if (this._noWaypointComponent) {
+      this._noWaypointComponent.hide();
+    }
+    if (this._sortPoints) {
+      this._sortComponent.hide();
+    }
+  }
+
+  show() {
+    this._container.show();
+  }
+
+  toggle() {
+    if (this._pointsModel.getPoints().length === 0) {
+      if (!this._noWaypointComponent) {
+        this._noWaypointComponent = new NoWaypointComponent();
+        renderElement(this._eventElement, this._noWaypointComponent);
+      } else {
+        if (this._noWaypointComponent) {
+          remove(this._noWaypointComponent);
+          this._noWaypointComponent = null;
+
+        } else {
+          this._sortComponent.show();
+        }
+      }
+      this._sortComponent.hide();
+    }
+    enableComponent(`trip-main__event-add-btn`);
+    const infoElement = document.querySelector(`.trip-info`);
+    infoElement.textContent = ``;
+
+    this.render();
+    this._sortPoints(this._currentSortType);
+    getFullPrice(this._pointsModel.getPoints());
+  }
+
   render() {
     this._showedPointControllers = renderTrip(
         this._pointsModel.getPoints(),
@@ -96,24 +137,16 @@ export default class TripController {
         this._isDefaultSort
     );
 
-    const eventElement = document.querySelector(`.trip-events`);
-    if (this._pointsModel.getPoints().length === 0) {
-      renderElement(eventElement, this._noWaypointComponent);
-      return;
-    }
-
     const infoElement = document.querySelector(`.trip-info`);
+
     renderElement(infoElement, new TripInfoComponent(this._pointsModel.getPoints()));
     renderElement(infoElement, new TripCostComponent(this._pointsModel.getPoints()));
-    renderElement(eventElement, this._sortComponent, RenderPosition.AFTERBEGIN);
-
+    renderElement(this._eventElement, this._sortComponent, RenderPosition.AFTERBEGIN);
     this._sortComponent.setSortTypeChangeHandler((sortType) => {
       this._sortPoints(sortType);
     });
-
     this._sortPoints(this._currentSortType);
     this._checkSortType(this._currentSortType);
-
     getFullPrice(this._pointsModel.getPoints());
   }
 
@@ -125,11 +158,7 @@ export default class TripController {
         this._updatePoints();
       } else {
         this._pointsModel.addPoint(newPoint);
-        this._showedPointControllers = [
-          pointController,
-          ...this._showedPointControllers
-        ];
-
+        this._showedPointControllers = [pointController, ...this._showedPointControllers];
         this._removePoints();
 
         this._showedPointControllers = renderTrip(
@@ -150,19 +179,9 @@ export default class TripController {
         pointController.render(newPoint, Mode.DEFAULT);
       }
     }
-    getFullPrice(this._pointsModel.getPoints());
 
-    const eventElement = document.querySelector(`.trip-events`);
-    if (this._pointsModel.getPoints().length === 0) {
-      renderElement(eventElement, this._noWaypointComponent);
-      return;
-    }
-    this._updatePoints();
-    const infoElement = document.querySelector(`.trip-info__main`);
-    infoElement.textContent = ``;
-    renderElement(infoElement, new TripInfoComponent(this._pointsModel.getPoints()));
-    this._sortPoints(this._currentSortType);
-    enableComponent(`trip-main__event-add-btn`);
+
+    this.toggle();
   }
 
   _sortPoints(sortType) {
@@ -188,7 +207,7 @@ export default class TripController {
         this._currentSortType = sortType;
         break;
     }
-
+    enableComponent(`trip-main__event-add-btn`);
     this._removePoints();
     this._creatingPoint = null;
     this._showedPointControllers = renderTrip(
@@ -202,7 +221,10 @@ export default class TripController {
 
   _checkSortType(sortType) {
     const sortElement = document.querySelector(`input[data-sort-type=${sortType}]`);
-    sortElement.checked = true;
+    if (sortElement) {
+      sortElement.checked = true;
+    }
+
   }
 
   _onViewChange() {

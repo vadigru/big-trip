@@ -29,6 +29,11 @@ export const FilterType = {
   PAST: `past`
 };
 
+export const MenuItem = {
+  TABLE: `table`,
+  STATS: `stats`
+};
+
 const FILTERS = [
   {
     name: `everything`,
@@ -47,11 +52,11 @@ const FILTERS = [
 const MENU_ITEMS = [
   {
     name: `table`,
-    checked: true,
+    selected: true,
   },
   {
     name: `stats`,
-    checked: false,
+    selected: false,
   },
 ];
 
@@ -80,56 +85,172 @@ const CITIES = [
   `Tokyo`
 ];
 
-const OPTIONS = [
+const OFFERS = [
   {
-    name: `Add luggage`,
-    type: `luggage`,
-    price: 30,
-    checked: false,
+    type: `taxi`,
+    offers: [
+      {
+        name: `Open the window`,
+        price: 120
+      }, {
+        name: `Choose the radio station`,
+        price: 60
+      }
+    ]
   },
   {
-    name: `Switch to comfort`,
-    type: `comfort`,
-    price: 100,
-    checked: false,
+    type: `bus`,
+    offers: [
+      {
+        name: `Smoke in the bus`,
+        price: 120
+      }, {
+        name: `Sleep all way`,
+        price: 0
+      }
+    ]
   },
   {
-    name: `Add meal`,
-    type: `meal`,
-    price: 15,
-    checked: false,
-  },
-  {
-    name: `Choose seats`,
-    type: `seats`,
-    price: 5,
-    checked: false,
-  },
-  {
-    name: `Trevel by train`,
     type: `train`,
-    price: 40,
-    checked: false,
+    offers: [
+      {
+        name: `Tuk Tuk Tuki tuk`,
+        price: 500
+      }, {
+        name: `Order peppermint tea`,
+        price: 20
+      }
+    ]
   },
   {
-    name: `Get escort`,
-    type: `escort`,
-    price: 75,
-    checked: false,
+    type: `ship`,
+    offers: [
+      {
+        name: `Take a party`,
+        price: 200
+      }, {
+        name: `Choose the radio station`,
+        price: 60
+      }
+    ]
   },
   {
-    name: `Hire a guide`,
-    type: `guide`,
-    price: 50,
-    checked: false,
+    type: `transport`,
+    offers: [
+      {
+        name: `Upgrade to a business class`,
+        price: 120
+      }, {
+        name: `Choose the radio station`,
+        price: 60
+      }
+    ]
   },
   {
-    name: `Sleep all day`,
-    type: `sleep`,
-    price: 0,
-    checked: false,
+    type: `drive`,
+    offers: [
+    ]
   },
+  {
+    type: `flight`,
+    offers: [
+      {
+        name: `Upgrade to a business class`,
+        price: 120
+      }, {
+        name: `Choose seats`,
+        price: 100
+      }
+    ]
+  },
+  {
+    type: `check-in`,
+    offers: [
+      {
+        name: `Choose check-in time`,
+        price: 30
+      }, {
+        name: `Choose room with perfect view`,
+        price: 80
+      }
+    ]
+  },
+  {
+    type: `sightseeing`,
+    offers: [
+      {
+        name: `Hire a guide`,
+        price: 50
+      }, {
+        name: `Drink beer`,
+        price: 100
+      }
+    ]
+  },
+  {
+    type: `restaurant`,
+    offers: [
+      {
+        name: `Add meal`,
+        price: 120
+      }, {
+        name: `Switch to comfort`,
+        price: 160
+      }
+    ]
+  }
 ];
+
+// const OPTIONS = [
+//   {
+//     name: `Add luggage`,
+//     type: `luggage`,
+//     price: 30,
+//     checked: false,
+//   },
+//   {
+//     name: `Switch to comfort`,
+//     type: `comfort`,
+//     price: 100,
+//     checked: false,
+//   },
+//   {
+//     name: `Add meal`,
+//     type: `meal`,
+//     price: 15,
+//     checked: false,
+//   },
+//   {
+//     name: `Choose seats`,
+//     type: `seats`,
+//     price: 5,
+//     checked: false,
+//   },
+//   {
+//     name: `Trevel by train`,
+//     type: `train`,
+//     price: 40,
+//     checked: false,
+//   },
+//   {
+//     name: `Get escort`,
+//     type: `escort`,
+//     price: 75,
+//     checked: false,
+//   },
+//   {
+//     name: `Hire a guide`,
+//     type: `guide`,
+//     price: 50,
+//     checked: false,
+//   },
+//   {
+//     name: `Sleep all day`,
+//     type: `sleep`,
+//     price: 0,
+//     checked: false,
+//   },
+// ];
 
 const PHRASES = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit.`,
@@ -145,4 +266,4 @@ const PHRASES = [
   `In rutrum ac purus sit amet tempus.`,
 ];
 
-export {FILTERS, MENU_ITEMS, TRANSFER_TYPES, ACTIVITY_TYPES, CITIES, OPTIONS, PHRASES};
+export {FILTERS, MENU_ITEMS, TRANSFER_TYPES, ACTIVITY_TYPES, CITIES, OFFERS, PHRASES};

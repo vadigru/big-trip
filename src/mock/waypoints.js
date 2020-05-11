@@ -1,8 +1,20 @@
 import {getRandomArrayItems, getRandomIntegerNumber, shuffleArray} from '../utils/common.js';
-import {TRANSFER_TYPES, ACTIVITY_TYPES, CITIES, OPTIONS, PHRASES} from '../const.js';
+import {TRANSFER_TYPES, ACTIVITY_TYPES, CITIES, OFFERS, PHRASES} from '../const.js';
 
-const OFFER_COUNT = 10;
-const getRandomOffers = () => shuffleArray(getRandomChecked(OPTIONS)).slice(0, getRandomIntegerNumber(0, OFFER_COUNT));
+// const OFFER_COUNT = 10;
+// const getRandomOffers = () => shuffleArray(getRandomChecked(OPTIONS)).slice(0, getRandomIntegerNumber(0, OFFER_COUNT));
+// const getRandomOffers = (type) => OFFERS.forEach((item) => item.type === type);
+
+const getOffers = (arr, type) => {
+  let array = [];
+  arr.forEach((item) =>{
+    if (item.type === type) {
+      array = item.offers;
+    }
+  });
+  return array;
+};
+
 const getDescription = () => getRandomDescription(PHRASES);
 const getPhotos = () => Array(5).fill(``).map(getRandomPhoto);
 
@@ -39,19 +51,21 @@ const getRandomChecked = (arr) => {
   return arr;
 };
 
+
 const generateWaypoint = () => {
   const MIN_PRICE = 50;
   const MAX_PRICE = 100;
   const start = getRandomDate();
   const end = getRandomDate();
+  const randomType = getRandomArrayItems(TRANSFER_TYPES.concat(ACTIVITY_TYPES));
   return {
-    id: String(Date.now() + Math.random()),
-    type: getRandomArrayItems(TRANSFER_TYPES.concat(ACTIVITY_TYPES)),
+    id: String(Date.now() + Math.random()).slice(14),
+    type: randomType,
     city: getRandomArrayItems(CITIES),
     startDate: Math.min(start, end),
     endDate: Math.max(start, end),
     price: getRandomIntegerNumber(MIN_PRICE, MAX_PRICE),
-    offers: getRandomOffers(),
+    offers: getRandomChecked(getOffers(OFFERS, randomType)),
     description: getDescription(),
     photos: getPhotos(),
     isFavorite: Math.random() < 0.5,
@@ -79,5 +93,5 @@ const EmptyPoint = {
   isNew: true
 };
 
-export {generateWaypoint, generateWaypoints, getRandomOffers, getDescription, getPhotos, EmptyPoint};
+export {generateWaypoint, generateWaypoints, getOffers, getDescription, getPhotos, EmptyPoint};
 
