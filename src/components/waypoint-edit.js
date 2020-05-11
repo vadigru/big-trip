@@ -352,7 +352,7 @@ export default class WaypointEdit extends AbstractSmartComponent {
       .addEventListener(`change`, (evt) => {
         this._smartPrice = encode(evt.target.value);
         this._validate(evt.target.name, this._smartPrice);
-        this.rerender();
+        // this.rerender();
       });
 
     element.querySelector(`.event__input--price`)

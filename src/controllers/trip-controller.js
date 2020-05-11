@@ -70,10 +70,10 @@ export default class TripController {
 
     this._sortComponent.show();
     this._creatingPoint.render(EmptyPoint, Mode.ADDING);
-    if (this._noWaypointComponent) {
-      remove(this._noWaypointComponent);
-      this._noWaypointComponent = null;
-    }
+    // if (this._noWaypointComponent) {
+    //   remove(this._noWaypointComponent);
+    //   this._noWaypointComponent = null;
+    // }
 
     this._onViewChange();
   }
@@ -91,38 +91,37 @@ export default class TripController {
 
   hide() {
     this._container.hide();
-    if (this._noWaypointComponent) {
-      this._noWaypointComponent.hide();
-    }
-    if (this._sortPoints) {
-      this._sortComponent.hide();
-    }
+    this._sortComponent.hide();
   }
 
   show() {
     this._container.show();
+    this._sortComponent.show();
   }
 
   toggle() {
     if (this._pointsModel.getPoints().length === 0) {
+      this._sortComponent.hide();
       if (!this._noWaypointComponent) {
         this._noWaypointComponent = new NoWaypointComponent();
         renderElement(this._eventElement, this._noWaypointComponent);
+        this._sortComponent.hide();
       } else {
-        if (this._noWaypointComponent) {
+        if (this._pointsModel.getPoints().length === 0 && this._noWaypointComponent) {
+          enableComponent(`trip-main__event-add-btn`);
+          // return;
+        }
+        if (this._pointsModel.getPoints().length) {
           remove(this._noWaypointComponent);
           this._noWaypointComponent = null;
-
-        } else {
           this._sortComponent.show();
         }
       }
-      this._sortComponent.hide();
     }
+
     enableComponent(`trip-main__event-add-btn`);
     const infoElement = document.querySelector(`.trip-info`);
     infoElement.textContent = ``;
-
     this.render();
     this._sortPoints(this._currentSortType);
     getFullPrice(this._pointsModel.getPoints());

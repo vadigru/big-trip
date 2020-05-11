@@ -23,7 +23,7 @@ const menuComponent = new MenuComponent(MENU_ITEMS);
 const tripDaysComponent = new TripDaysComponent();
 const filterController = new FilterController(menuElement, pointsModel);
 const tripController = new TripController(tripDaysComponent, pointsModel);
-const statsComponent = new StatsComponent(waypoints);
+const statsComponent = new StatsComponent(pointsModel);
 
 renderElement(menuElement, menuComponent);
 renderElement(eventElement, tripDaysComponent);
@@ -38,16 +38,16 @@ statsComponent.hide();
 const newPointElement = document.querySelector(`.trip-main__event-add-btn`);
 newPointElement.addEventListener(`click`, () => {
   if (statsComponent) {
-    menuComponent.setSelectedItem(MenuItem.TABLE);
     statsComponent.hide();
     tripController.show();
   }
+  menuComponent.setSelectedItem(MenuItem.TABLE);
   disableComponent(`trip-main__event-add-btn`);
   filterController._onFilterChange(FilterType.EVERYTHING);
   tripController.createPoint();
 });
 
-renderElement(siteMainElement, statsComponent, RenderPosition.BEFOREEND);
+renderElement(eventElement, statsComponent, RenderPosition.BEFOREEND);
 statsComponent.hide();
 
 menuComponent.setChangeHandler((menuItem) => {

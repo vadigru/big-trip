@@ -2,7 +2,6 @@ import AbstractSmartComponent from './abstract-smart-component.js';
 import Chart from "chart.js";
 import chartjsPluginDatalabels from 'chartjs-plugin-datalabels';
 import moment from "moment";
-// import {PointTypeToPretext} from '../const.js';
 
 const ChartIconToPretext = {
   "taxi": `in`,
@@ -122,7 +121,7 @@ const renderChart = (ctx, data, label, legend, isLabelPositonLeft = false) => {
           borderWidth: 1,
           barThickness: 30,
           barPercentage: 1.0,
-
+          minBarLength: 50
         }
       ]
     },
@@ -132,10 +131,6 @@ const renderChart = (ctx, data, label, legend, isLabelPositonLeft = false) => {
       legend: {
         display: false,
         position: `left`,
-        labels: {
-          fontSize: 18,
-          fontStyle: `bold`,
-        }
       },
       tooltips: {
         mode: `nearest`,
@@ -154,6 +149,11 @@ const renderChart = (ctx, data, label, legend, isLabelPositonLeft = false) => {
         ],
         yAxes: [
           {
+            ticks: {
+              fontColor: `#000000`,
+              padding: 5,
+              fontSize: 14,
+            },
             gridLines: {
               display: false
             },
@@ -163,7 +163,7 @@ const renderChart = (ctx, data, label, legend, isLabelPositonLeft = false) => {
               labelString: legend.toUpperCase()
             }
           }
-        ]
+        ],
       },
       plugins: {
         datalabels: {
@@ -234,9 +234,9 @@ export default class Statistics extends AbstractSmartComponent {
     const timeCtx = element.querySelector(`.statistics__chart--time`);
 
     this._resetCharts();
-
+    const points = this._pointsModel.getPoints();
     const {moneyData, transportData, timeData} = generateChartsData(
-        this._pointsModel
+        points
     );
 
     this._moneyChart = renderChart(
@@ -284,7 +284,6 @@ export default class Statistics extends AbstractSmartComponent {
 
   show() {
     super.show();
-
     this.rerender();
   }
 
