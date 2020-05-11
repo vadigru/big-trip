@@ -119,7 +119,7 @@ const renderChart = (ctx, data, label, legend, isLabelPositonLeft = false) => {
           backgroundColor: `lightyellow`,
           borderColor: `#008AE9`,
           borderWidth: 1,
-          barThickness: 30,
+          barThickness: 35,
           barPercentage: 1.0,
           minBarLength: 50
         }
@@ -151,7 +151,7 @@ const renderChart = (ctx, data, label, legend, isLabelPositonLeft = false) => {
           {
             ticks: {
               fontColor: `#000000`,
-              padding: 5,
+              padding: 0,
               fontSize: 14,
             },
             gridLines: {

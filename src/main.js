@@ -10,7 +10,7 @@ import {renderElement, RenderPosition} from './utils/render.js';
 import {disableComponent} from './utils/common.js';
 import {MenuItem, MENU_ITEMS, FilterType} from './const.js';
 
-const WAYPOINTS_COUNT = 20;
+const WAYPOINTS_COUNT = 2;
 const waypoints = generateWaypoints(WAYPOINTS_COUNT);
 
 const headerElement = document.querySelector(`.trip-main`);
@@ -29,12 +29,11 @@ renderElement(menuElement, menuComponent);
 renderElement(eventElement, tripDaysComponent);
 renderElement(headerElement, new TripMainInfoComponent(), RenderPosition.AFTERBEGIN);
 renderElement(siteMainElement, statsComponent);
-
 pointsModel.setPoints(waypoints);
+
 tripController.render();
 filterController.render();
 statsComponent.hide();
-
 const newPointElement = document.querySelector(`.trip-main__event-add-btn`);
 newPointElement.addEventListener(`click`, () => {
   if (statsComponent) {

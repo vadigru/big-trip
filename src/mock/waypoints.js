@@ -51,7 +51,6 @@ const getRandomChecked = (arr) => {
   return arr;
 };
 
-
 const generateWaypoint = () => {
   const MIN_PRICE = 50;
   const MAX_PRICE = 100;
@@ -86,7 +85,7 @@ const EmptyPoint = {
   startDate: Date.now(),
   endDate: Date.now(),
   price: 0,
-  offers: [],
+  offers: OFFERS[0].offers,
   description: ``,
   photos: [],
   isFavorite: false,

@@ -152,7 +152,7 @@ export default class WaypointEdit extends AbstractSmartComponent {
 
         </header>
         <section class="event__details" ${this._offers.length === 0 && this._description === `` ? `style="display: none;"` : ``}>
-          <section class="event__section  event__section--offers" ${this._offers.length === 0 ? `style="display: none;"` : ``}>
+          <section class="event__section  event__section--offers">
             <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
             <div class="event__available-offers">
@@ -339,13 +339,13 @@ export default class WaypointEdit extends AbstractSmartComponent {
     .addEventListener(`change`, (evt) => {
       this._startDate = evt.target.value;
       this._endDate = this._startDate;
-      // this.rerender();
+      this.rerender();
     });
 
     element.querySelector(`input[name="event-end-time"]`)
       .addEventListener(`change`, (evt) => {
         this._endDate = evt.target.value;
-        // this.rerender();
+        this.rerender();
       });
 
     element.querySelector(`.event__input--price`)

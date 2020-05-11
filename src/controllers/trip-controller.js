@@ -62,18 +62,18 @@ export default class TripController {
     if (this._creatingPoint) {
       return;
     }
+
+    if (this._noWaypointComponent) {
+      remove(this._noWaypointComponent);
+    }
+
     this._creatingPoint = new PointController(
         this._container.getElement(),
         this._onDataChange,
         this._onViewChange
     );
 
-    this._sortComponent.show();
     this._creatingPoint.render(EmptyPoint, Mode.ADDING);
-    // if (this._noWaypointComponent) {
-    //   remove(this._noWaypointComponent);
-    //   this._noWaypointComponent = null;
-    // }
 
     this._onViewChange();
   }
@@ -92,42 +92,32 @@ export default class TripController {
   hide() {
     this._container.hide();
     this._sortComponent.hide();
+    if (this._noWaypointComponent) {
+      remove(this._noWaypointComponent);
+      this._noWaypointComponent = null;
+    }
   }
 
   show() {
     this._container.show();
     this._sortComponent.show();
-  }
-
-  toggle() {
-    if (this._pointsModel.getPoints().length === 0) {
-      this._sortComponent.hide();
-      if (!this._noWaypointComponent) {
-        this._noWaypointComponent = new NoWaypointComponent();
-        renderElement(this._eventElement, this._noWaypointComponent);
-        this._sortComponent.hide();
-      } else {
-        if (this._pointsModel.getPoints().length === 0 && this._noWaypointComponent) {
-          enableComponent(`trip-main__event-add-btn`);
-          // return;
-        }
-        if (this._pointsModel.getPoints().length) {
-          remove(this._noWaypointComponent);
-          this._noWaypointComponent = null;
-          this._sortComponent.show();
-        }
-      }
+    if (!this._noWaypointComponent && this._pointsModel.getPoints().length === 0) {
+      this._noWaypointComponent = new NoWaypointComponent();
+      renderElement(this._eventElement, this._noWaypointComponent);
     }
-
-    enableComponent(`trip-main__event-add-btn`);
-    const infoElement = document.querySelector(`.trip-info`);
-    infoElement.textContent = ``;
-    this.render();
-    this._sortPoints(this._currentSortType);
-    getFullPrice(this._pointsModel.getPoints());
   }
 
   render() {
+    if (this._pointsModel.getPoints().length === 0) {
+      this._noWaypointComponent = new NoWaypointComponent();
+      renderElement(this._eventElement, this._noWaypointComponent);
+    }
+
+    const infoElement = document.querySelector(`.trip-info`);
+    renderElement(infoElement, new TripInfoComponent(this._pointsModel.getPoints()));
+    renderElement(infoElement, new TripCostComponent(this._pointsModel.getPoints()));
+    renderElement(this._eventElement, this._sortComponent, RenderPosition.AFTERBEGIN);
+
     this._showedPointControllers = renderTrip(
         this._pointsModel.getPoints(),
         this._container,
@@ -136,14 +126,10 @@ export default class TripController {
         this._isDefaultSort
     );
 
-    const infoElement = document.querySelector(`.trip-info`);
-
-    renderElement(infoElement, new TripInfoComponent(this._pointsModel.getPoints()));
-    renderElement(infoElement, new TripCostComponent(this._pointsModel.getPoints()));
-    renderElement(this._eventElement, this._sortComponent, RenderPosition.AFTERBEGIN);
     this._sortComponent.setSortTypeChangeHandler((sortType) => {
       this._sortPoints(sortType);
     });
+
     this._sortPoints(this._currentSortType);
     this._checkSortType(this._currentSortType);
     getFullPrice(this._pointsModel.getPoints());
@@ -179,8 +165,12 @@ export default class TripController {
       }
     }
 
-
-    this.toggle();
+    enableComponent(`trip-main__event-add-btn`);
+    const infoElement = document.querySelector(`.trip-info`);
+    infoElement.textContent = ``;
+    this.render();
+    this._sortPoints(this._currentSortType);
+    getFullPrice(this._pointsModel.getPoints());
   }
 
   _sortPoints(sortType) {
@@ -206,6 +196,7 @@ export default class TripController {
         this._currentSortType = sortType;
         break;
     }
+
     enableComponent(`trip-main__event-add-btn`);
     this._removePoints();
     this._creatingPoint = null;
