@@ -1,45 +1,29 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {TRANSFER_TYPES, ACTIVITY_TYPES, CITIES, OFFERS, PointTypeToPretext} from '../const.js';
+import {TRANSFER_TYPES, ACTIVITY_TYPES, PointTypeToPretext} from '../const.js';
 import {capitalizeFirstLetter} from '../utils/common.js';
-import {getOffers, getDescription, getPhotos} from '../mock/waypoints.js';
+
+// import {getOffers, getDescription, getPhotos} from '../mock/waypoints.js';
 import flatpickr from 'flatpickr';
-import moment from 'moment';
+// import moment from 'moment';
 import {encode} from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/material_blue.css';
 
-const parseFormData = (formData, offers, photos, description, id) => {
-  return {
-    id,
-    type: formData.get(`event-type`),
-    city: encode(formData.get(`event-destination`)),
-    startDate: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
-    endDate: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
-    price: parseInt(encode(formData.get(`event-price`)), 10),
-    offers: offers.map((offer, i) => {
-      return {
-        name: offer.name,
-        price: offer.price,
-        checked: formData.get(`event-offer-${formData.get(`event-type`)}${i}`) === `on`
-      };
-    }),
-    description,
-    photos,
-    isFavorite: formData.get(`event-favorite`) === `on`
-  };
-};
-
 export default class WaypointEdit extends AbstractSmartComponent {
-  constructor(point) {
+
+  constructor(point, offers, destinations) {
     super();
     this._point = point;
-    this._type = this._point.type;
+    this._type = point.type;
     this._city = encode(this._point.city);
     this._startDate = this._point.startDate;
     this._endDate = this._point.endDate;
     this._pointPrice = encode(this._point.price.toString());
     this._offers = this._point.offers;
+    this._offersSet = offers;
+    this._destination = this._point.description;
+    this._destinationsSet = destinations;
     this._description = this._point.description;
     this._photos = this._point.photos;
     this._isFavorite = this._point.isFavorite;
@@ -59,110 +43,112 @@ export default class WaypointEdit extends AbstractSmartComponent {
 
   getTemplate() {
     return (
-      `<form class="trip-events__item  event  event--edit" action="#" method="post">
-        <header class="event__header">
-          <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle-${this._id}">
-              <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type}.png" alt="Event type icon">
-            </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${this._id}" type="checkbox">
-
-            <div class="event__type-list">
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">Transfer</legend>
-                ${TRANSFER_TYPES
-                  .map((transfer) => {
-                    return (
-                      `<div class="event__type-item">
-                      <input id="event-type-${transfer}-${this._id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${transfer}" ${this._type === transfer && `checked`}>
-                      <label class="event__type-label  event__type-label--${transfer}" for="event-type-${transfer}-${this._id}">${capitalizeFirstLetter(transfer)}</label>
-                    </div>`
-                    );
-                  }
-                  ).join(``)}
-              </fieldset>
-
-              <fieldset class="event__type-group">
-                <legend class="visually-hidden">Activity</legend>
-                ${ACTIVITY_TYPES
-                  .map((activity) => {
-                    return (
-                      `<div class="event__type-item">
-                      <input id="event-type-${activity}-${this._id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${activity}" ${this._type === activity && `checked`}>
-                      <label class="event__type-label  event__type-label--${activity}" for="event-type-${activity}-${this._id}">${capitalizeFirstLetter(activity)}</label>
-                    </div>`
-                    );
-                  }
-                  ).join(``)}
-              </fieldset>
-            </div>
-          </div>
-
-          <div class="event__field-group  event__field-group--destination">
-            <label class="event__label  event__type-output" for="event-destination-${this._id}">
-              ${capitalizeFirstLetter(this._type)} ${PointTypeToPretext[this._type]}
-            </label>
-            <input class="event__input  event__input--destination" id="event-destination-${this._id}" type="text" name="event-destination" value="${this._smartCity ? this._smartCity : this._city}" list="destination-list-${this._id}" required>
-            <datalist id="destination-list-${this._id}">
-            ${CITIES
-              .map((it) => {
-                return (
-                  `<option value="${it}"></option>`
-                );
-              }).join(``)}
-            </datalist>
-          </div>
-
-          <div class="event__field-group  event__field-group--time">
-            <label class="visually-hidden" for="event-start-time-${this._id}">
-              From
-            </label>
-            <input class="event__input  event__input--time" id="event-start-time-${this._id}" type="text" name="event-start-time" value="${this._startDate}">
-            &mdash;
-            <label class="visually-hidden" for="event-end-time-${this._id}">
-              To
-            </label>
-            <input class="event__input  event__input--time" id="event-end-time-${this._id}" type="text" name="event-end-time" value="${this._endDate}">
-          </div>
-
-          <div class="event__field-group  event__field-group--price">
-            <label class="event__label" for="event-price-${this._id}">
-              <span class="visually-hidden">Price</span>
-              &euro;
-            </label>
-            <input class="event__input  event__input--price" id="event-price-${this._id}" type="text" name="event-price" value="${this._smartPrice ? this._smartPrice : this._pointPrice}" pattern="[0-9]+" required>
-          </div>
-
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">
-            ${this._isNew ? `Cancel` : `Delete`}
-          </button>
-              ${!this._isNew ? `<input id="event-favorite-${this._id}" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite && `checked`}>
-              <label class="event__favorite-btn" for="event-favorite-${this._id}">
-                <span class="visually-hidden">Add to favorite</span>
-                <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
-                  <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
-                </svg>
+      `<li class="trip-events__item">
+        <form class="trip-events__item  event  event--edit" action="#" method="post">
+          <header class="event__header">
+            <div class="event__type-wrapper">
+              <label class="event__type  event__type-btn" for="event-type-toggle-${this._id}">
+                <span class="visually-hidden">Choose event type</span>
+                <img class="event__type-icon" width="17" height="17" src="img/icons/${this._type}.png" alt="Event type icon">
               </label>
+              <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${this._id}" type="checkbox">
 
-            <button class="event__rollup-btn" type="button">
-              <span class="visually-hidden">Open event</span>
-            </button>` : ``}
+              <div class="event__type-list">
+                <fieldset class="event__type-group">
+                  <legend class="visually-hidden">Transfer</legend>
+                  ${TRANSFER_TYPES
+                    .map((transfer) => {
+                      return (
+                        `<div class="event__type-item">
+                        <input id="event-type-${transfer}-${this._id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${transfer}" ${this._type === transfer && `checked`}>
+                        <label class="event__type-label  event__type-label--${transfer}" for="event-type-${transfer}-${this._id}">${capitalizeFirstLetter(transfer)}</label>
+                      </div>`
+                      );
+                    }
+                    ).join(``)}
+                </fieldset>
 
-        </header>
-        <section class="event__details" ${this._offers.length === 0 && this._description === `` ? `style="display: none;"` : ``}>
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+                <fieldset class="event__type-group">
+                  <legend class="visually-hidden">Activity</legend>
+                  ${ACTIVITY_TYPES
+                    .map((activity) => {
+                      return (
+                        `<div class="event__type-item">
+                        <input id="event-type-${activity}-${this._id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${activity}" ${this._type === activity && `checked`}>
+                        <label class="event__type-label  event__type-label--${activity}" for="event-type-${activity}-${this._id}">${capitalizeFirstLetter(activity)}</label>
+                      </div>`
+                      );
+                    }
+                    ).join(``)}
+                </fieldset>
+              </div>
+            </div>
 
-            <div class="event__available-offers">
-              ${this._offers
+            <div class="event__field-group  event__field-group--destination">
+              <label class="event__label  event__type-output" for="event-destination-${this._id}">
+                ${capitalizeFirstLetter(this._type)} ${PointTypeToPretext[this._type]}
+              </label>
+              <input class="event__input  event__input--destination" id="event-destination-${this._id}" type="text" name="event-destination" value="${this._smartCity ? this._smartCity : this._city}" list="destination-list-${this._id}" required>
+              <datalist id="destination-list-${this._id}">
+              ${Object.keys(this._destinationsSet)
+                .map((it) => {
+                  return (
+                    `<option value="${it}"></option>`
+                  );
+                }).join(``)}
+              </datalist>
+            </div>
+
+            <div class="event__field-group  event__field-group--time">
+              <label class="visually-hidden" for="event-start-time-${this._id}">
+                From
+              </label>
+              <input class="event__input  event__input--time" id="event-start-time-${this._id}" type="text" name="event-start-time" value="${this._startDate}">
+              &mdash;
+              <label class="visually-hidden" for="event-end-time-${this._id}">
+                To
+              </label>
+              <input class="event__input  event__input--time" id="event-end-time-${this._id}" type="text" name="event-end-time" value="${this._endDate}">
+            </div>
+
+            <div class="event__field-group  event__field-group--price">
+              <label class="event__label" for="event-price-${this._id}">
+                <span class="visually-hidden">Price</span>
+                &euro;
+              </label>
+              <input class="event__input  event__input--price" id="event-price-${this._id}" type="text" name="event-price" value="${this._smartPrice ? this._smartPrice : this._pointPrice}" pattern="[0-9]+" required>
+            </div>
+
+            <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+            <button class="event__reset-btn" type="reset">
+              ${this._isNew ? `Cancel` : `Delete`}
+            </button>
+                ${!this._isNew ? `<input id="event-favorite-${this._id}" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite && `checked`}>
+                <label class="event__favorite-btn" for="event-favorite-${this._id}">
+                  <span class="visually-hidden">Add to favorite</span>
+                  <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+                    <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
+                  </svg>
+                </label>
+
+              <button class="event__rollup-btn" type="button">
+                <span class="visually-hidden">Open event</span>
+              </button>` : ``}
+
+          </header>
+          <section class="event__details  ${this._offersSet[this._type].length === 0 && this._description === `` ? `visually-hidden` : ``}">
+            <section class="event__section  event__section--offers ${this._offersSet[this._type].length === 0 ? `visually-hidden` : ``}">
+              <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+
+              ${this._isNew ? `<div class="event__available-offers">
+
+              ${this._offersSet[this._type]
                 .map((offer, i) => {
                   return (
                     `<div class="event__offer-selector">
-                    <input class="event__offer-checkbox visually-hidden" id="event-offer-${this._type}${i}-${this._id}" type="checkbox" name="event-offer-${this._type}${i}" ${offer.checked && `checked`}>
+                    <input class="event__offer-checkbox visually-hidden" id="event-offer-${this._type}${i}-${this._id}" type="checkbox" name="event-offer-${this._type}${i}">
                     <label class="event__offer-label" for="event-offer-${this._type}${i}-${this._id}">
-                      <span class="event__offer-title">${offer.name}</span>
+                      <span class="event__offer-title">${offer.title}</span>
                       &plus;
                       &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
                     </label>
@@ -170,34 +156,54 @@ export default class WaypointEdit extends AbstractSmartComponent {
                   );
                 })
                 .join(``)}
-            </div>
-          </section>
+            </div>` : `<div class="event__available-offers">
 
-          <section class="event__section  event__section--destination" ${this._description === `` ? `style="display: none;"` : ``}>
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">
-              ${this._description}
-            </p>
-            <div class="event__photos-container">
-              <div class="event__photos-tape">
-              ${this._photos
-                .map((photo) => {
+              ${this._offersSet[this._type]
+                .map((offer, i) => {
+                  const isOfferChecked = () => this._offers.some((currentOffer) => currentOffer.title === offer.title) ? `checked` : ``;
                   return (
-                    `<img
-                      class="event__photo"
-                      src="${photo}"
-                      alt="Event photo"
-                    />`
+                    `<div class="event__offer-selector">
+                    <input class="event__offer-checkbox visually-hidden" id="event-offer-${this._type}${i}-${this._id}" type="checkbox" name="event-offer-${this._type}${i}" ${isOfferChecked()}>
+                    <label class="event__offer-label" for="event-offer-${this._type}${i}-${this._id}">
+                      <span class="event__offer-title">${offer.title}</span>
+                      &plus;
+                      &euro;&nbsp;<span class="event__offer-price">${offer.price}</span>
+                    </label>
+                  </div>`
                   );
                 })
                 .join(``)}
+            </div>`}
+
+            </section>
+
+            <section class="event__section  event__section--destination" ${this._description === `` ? `style="display: none;"` : ``}>
+              <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+              <p class="event__destination-description">
+                ${this._description}
+              </p>
+              <div class="event__photos-container">
+                <div class="event__photos-tape">
+                ${this._photos
+                  .map((photo) => {
+                    return (
+                      `<img
+                        class="event__photo"
+                        src="${photo.src}"
+                        alt="Event photo"
+                      />`
+                    );
+                  })
+                  .join(``)}
+                </div>
               </div>
-            </div>
+            </section>
           </section>
-        </section>
-      </form>`
+        </form>
+      </li>`
     );
   }
+
 
   rerender() {
     super.rerender();
@@ -216,6 +222,7 @@ export default class WaypointEdit extends AbstractSmartComponent {
     this._offers = point.offers;
     this._description = point.description;
     this._photos = point.photos;
+
     this.rerender();
   }
 
@@ -251,24 +258,20 @@ export default class WaypointEdit extends AbstractSmartComponent {
   }
 
   getData() {
-    const form = this.getElement();
+    const form = this.getElement().querySelector(`form`);
     const formData = new FormData(form);
-    return parseFormData(
-        formData,
-        this._offers,
-        this._photos,
-        this._description,
-        this._id
-    );
+
+    return formData;
   }
+
 
   _validate(name, value) {
     const submitButton = this._element.querySelector(`.event__save-btn`);
     const cityValue = (name === `event-destination`)
-      ? value : (this._smartCity || this._city);
+      ? value : (this._city);
     const priceValue = (name === `event-price`)
       ? value : (this._smartPrice || this._pointPrice);
-    const isValidCity = CITIES.includes(cityValue);
+    const isValidCity = Object.keys(this._destinationsSet).includes(cityValue);
     const isValidPrice = !isNaN(parseInt((priceValue), 10));
     const isEmpty = (this._smartPrice === ``);
     submitButton.disabled = !(isValidCity && isValidPrice && !isEmpty);
@@ -310,12 +313,12 @@ export default class WaypointEdit extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
+
+
     element.querySelector(`.event__type-list`)
     .addEventListener(`click`, (evt) => {
-
       if (evt.target.tagName === `INPUT`) {
         this._type = evt.target.value;
-        this._offers = getOffers(OFFERS, this._type);
         this.rerender();
       }
     });
@@ -328,9 +331,15 @@ export default class WaypointEdit extends AbstractSmartComponent {
           this._photos = [];
         }
         if (this._smartCity !== ``) {
-          this._description = getDescription();
-          this._photos = getPhotos();
+          if (Object.keys(this._destinationsSet).includes(this._smartCity)) {
+            this._description = this._destinationsSet[this._smartCity].description;
+            this._photos = this._destinationsSet[this._smartCity].pictures;
+          } else {
+            this._description = `We know nothing about this place. Please select a destination from the dropdown list.`;
+            this._photos = [];
+          }
         }
+        this._city = this._smartCity;
         this._validate(evt.target.name, this._smartCity);
         this.rerender();
       });
@@ -352,7 +361,6 @@ export default class WaypointEdit extends AbstractSmartComponent {
       .addEventListener(`change`, (evt) => {
         this._smartPrice = encode(evt.target.value);
         this._validate(evt.target.name, this._smartPrice);
-        // this.rerender();
       });
 
     element.querySelector(`.event__input--price`)

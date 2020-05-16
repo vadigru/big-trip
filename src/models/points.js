@@ -1,9 +1,12 @@
 import {getPointsByFilter} from '../utils/filter.js';
+import {createOffersSet, createDestinationsSet} from '../utils/common.js';
 import {FilterType} from "../const.js";
 
 export default class Points {
   constructor() {
     this._points = [];
+    this._offersSet = {};
+    this._destinationsSet = {};
     this._activeFilterType = FilterType.EVERYTHING;
     this._dataChangeHandlers = [];
     this._filterChangeHandlers = [];
@@ -15,6 +18,22 @@ export default class Points {
 
   setPoints(points) {
     this._points = Array.from(points);
+  }
+
+  getOffers() {
+    return this._offersSet;
+  }
+
+  setOffers(offers) {
+    this._offersSet = createOffersSet(offers);
+  }
+
+  getDestinations() {
+    return this._destinationsSet;
+  }
+
+  setDestinations(destinations) {
+    this._destinationsSet = createDestinationsSet(destinations);
   }
 
   addPoint(point) {

@@ -13,7 +13,7 @@ const getTripCities = (pointsArr, citiesArr, startDatesArr, endDatesArr) => {
     str = `${startDatesArr[0].city} &nbsp;&mdash;&nbsp; ... &nbsp;&mdash;&nbsp; ${endDatesArr[endDatesArr.length - 1].city}`;
   }
   return str;
-}
+};
 
 export default class TripInfo extends AbstractComponent {
   constructor(points) {
