@@ -154,8 +154,11 @@ export default class TripController {
       }
 
     } else if (newPoint === null) {
-      this._pointsModel.removePoint(oldPoint.id);
-      this._updatePoints();
+      this._api.deletePoint(oldPoint.id)
+      .then(() => {
+        this._pointsModel.removePoint(oldPoint.id);
+        this._updatePoints();
+      });
     } else {
       this._api.updatePoint(oldPoint.id, newPoint)
          .then((point) => {
