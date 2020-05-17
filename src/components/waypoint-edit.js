@@ -1,17 +1,18 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
 import {TRANSFER_TYPES, ACTIVITY_TYPES, PointTypeToPretext} from '../const.js';
 import {capitalizeFirstLetter} from '../utils/common.js';
-
-// import {getOffers, getDescription, getPhotos} from '../mock/waypoints.js';
 import flatpickr from 'flatpickr';
-// import moment from 'moment';
 import {encode} from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/material_blue.css';
 
-export default class WaypointEdit extends AbstractSmartComponent {
+const DefaultData = {
+  deleteButtonText: `Delete`,
+  saveButtonText: `Save`,
+};
 
+export default class WaypointEdit extends AbstractSmartComponent {
   constructor(point, offers, destinations) {
     super();
     this._point = point;
@@ -24,11 +25,12 @@ export default class WaypointEdit extends AbstractSmartComponent {
     this._offersSet = offers;
     this._destination = this._point.description;
     this._destinationsSet = destinations;
-    this._description = this._point.description;
+    this._description = this._point.description || ``;
     this._photos = this._point.photos;
     this._isFavorite = this._point.isFavorite;
     this._id = this._point.id;
     this._isNew = this._point.isNew;
+    this._externalData = DefaultData;
     this._flatpickrStartDate = null;
     this._flatpickrEndDate = null;
     this._clickHandler = null;
@@ -116,12 +118,12 @@ export default class WaypointEdit extends AbstractSmartComponent {
                 <span class="visually-hidden">Price</span>
                 &euro;
               </label>
-              <input class="event__input  event__input--price" id="event-price-${this._id}" type="text" name="event-price" value="${this._smartPrice ? this._smartPrice : this._pointPrice}" pattern="[0-9]+" required>
+              <input class="event__input  event__input--price" id="event-price-${this._id}" type="text" name="event-price" value="${this._smartPrice ? this._smartPrice : this._pointPrice}">
             </div>
 
-            <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+            <button class="event__save-btn  btn  btn--blue" type="submit">${this._externalData.saveButtonText}</button>
             <button class="event__reset-btn" type="reset">
-              ${this._isNew ? `Cancel` : `Delete`}
+              ${this._isNew ? `Cancel` : this._externalData.deleteButtonText}
             </button>
                 ${!this._isNew ? `<input id="event-favorite-${this._id}" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${this._isFavorite && `checked`}>
                 <label class="event__favorite-btn" for="event-favorite-${this._id}">
@@ -257,6 +259,11 @@ export default class WaypointEdit extends AbstractSmartComponent {
     }
   }
 
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
+    this.rerender();
+  }
+
   getData() {
     const form = this.getElement().querySelector(`form`);
     const formData = new FormData(form);
@@ -264,6 +271,21 @@ export default class WaypointEdit extends AbstractSmartComponent {
     return formData;
   }
 
+  disableForm() {
+    const formElement = this.getElement().querySelector(`form`);
+    const formElements = Array.from(formElement.elements);
+    formElements.forEach((element) => {
+      element.disabled = true;
+    });
+  }
+
+  activateForm() {
+    const formElement = this.getElement().querySelector(`form`);
+    const formElements = Array.from(formElement.elements);
+    formElements.forEach((element) => {
+      element.disabled = false;
+    });
+  }
 
   _validate(name, value) {
     const submitButton = this._element.querySelector(`.event__save-btn`);

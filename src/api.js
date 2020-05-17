@@ -14,11 +14,20 @@ const checkStatus = (response) => {
     throw new Error(`${response.status}: ${response.statusText}`);
   }
 };
-
-const API = class {
+export default class API {
   constructor(endPoint, authorization) {
     this._endPoint = endPoint;
     this._authorization = authorization;
+  }
+
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+    headers.append(`Authorization`, this._authorization);
+
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+      .then(checkStatus)
+      .catch((err) => {
+        throw err;
+      });
   }
 
   getPoints() {
@@ -62,16 +71,4 @@ const API = class {
   deletePoint(id) {
     return this._load({url: `points/${id}`, method: Method.DELETE});
   }
-
-  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
-    headers.append(`Authorization`, this._authorization);
-
-    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(checkStatus)
-      .catch((err) => {
-        throw err;
-      });
-  }
-};
-
-export default API;
+}

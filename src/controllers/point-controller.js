@@ -1,14 +1,14 @@
 import WaypointComponent from '../components/waypoint.js';
 import WaypointEditComponent from '../components/waypoint-edit.js';
+import Point from "../models/point.js";
 import {renderElement, replaceElement, remove, RenderPosition} from '../utils/render.js';
 import {Mode} from '../const.js';
-import Point from "../models/point.js";
 import moment from 'moment';
 import {encode} from 'he';
-// import {EmptyPoint} from "../mock/waypoints.js";
+
+const SHAKE_ANIMATION_TIMEOUT = 10000;
 
 export const EmptyPoint = {
-  // id: String(Date.now() + Math.random()).slice(0, 10),
   type: `taxi`,
   city: ``,
   startDate: Date.now(),
@@ -80,11 +80,20 @@ export default class PointController {
       evt.preventDefault();
       const formData = this._waypointEditComponent.getData();
       const data = parseFormData(formData, this._destinationsSet, point.id);
+      this._waypointEditComponent.disableForm();
+      this._waypointEditComponent.setData({
+        saveButtonText: `Saving...`,
+      });
 
       this._onDataChange(this, point, data);
+      this._waypointEditComponent.activateForm();
     });
 
     this._waypointEditComponent.setDeleteButtonClickHandler(() => {
+      this._waypointEditComponent.setData({
+        deleteButtonText: `Deleting...`,
+      });
+
       this._onDataChange(this, point, null);
     });
 
@@ -116,6 +125,22 @@ export default class PointController {
     }
   }
 
+  shake() {
+    this._waypointEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    this._waypointComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+    setTimeout(() => {
+      this._waypointEditComponent.getElement().style.animation = ``;
+      this._waypointComponent.getElement().style.animation = ``;
+
+      this._waypointEditComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
+    }, SHAKE_ANIMATION_TIMEOUT);
+
+
+  }
+
   _replaceWaypointToWaypointEdit() {
     this._onViewChange();
     replaceElement(this._waypointEditComponent, this._waypointComponent);
@@ -127,7 +152,6 @@ export default class PointController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
     replaceElement(this._waypointComponent, this._waypointEditComponent);
     this._mode = Mode.DEFAULT;
-
   }
 
   _onEscKeyDown(evt) {

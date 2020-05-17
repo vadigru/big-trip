@@ -7,14 +7,11 @@ import TripController from './controllers/trip-controller.js';
 import TripMainInfoComponent from './components/trip-main-info.js';
 import TripPointsLoadind from './components/trip-points-loading.js';
 import PointsModel from './models/points.js';
-import {disableComponent} from './utils/common.js';
-// import {generateWaypoints} from './mock/waypoints.js';
 import {renderElement, RenderPosition, remove} from './utils/render.js';
-import {MenuItem, MENU_ITEMS, FilterType} from './const.js';
-// import PointController from './controllers/point-controller.js';
+import {MenuItem, MENU_ITEMS, FilterType, SortType} from './const.js';
 
 const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
-const AUTHORIZATION = `Basic kKUyyTR5*9OioOiUy`;
+const AUTHORIZATION = `Basic &&jUjUjkkollkjj=`;
 
 const api = new API(END_POINT, AUTHORIZATION);
 const pointsModel = new PointsModel();
@@ -47,8 +44,8 @@ newPointElement.addEventListener(`click`, () => {
     tripController.show();
   }
   menuComponent.setSelectedItem(MenuItem.TABLE);
-  disableComponent(`trip-main__event-add-btn`);
   filterController._onFilterChange(FilterType.EVERYTHING);
+  tripController._sortPoints(SortType.DEFAULT);
   tripController.createPoint();
 });
 
