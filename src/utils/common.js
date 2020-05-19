@@ -31,8 +31,8 @@ const getWaypointsCost = (arr) => arr.reduce((acc, it) => parseInt(acc, 10) + pa
 
 const getOffersCost = (arr) => {
   let sum = 0;
-  arr.forEach((item) => {
-    sum += item.offers.reduce((acc, it) => it.checked ? parseInt(acc, 10) + parseInt(it.price, 10) : parseInt(acc, 10), 0);
+  arr.forEach((offer) => {
+    sum += offer.offers.reduce((acc, it) => parseInt(acc, 10) + parseInt(it.price, 10), 0);
   });
   return sum;
 };
@@ -54,4 +54,25 @@ export const enableComponent = (className) => {
   if (component.getAttribute(`disabled`)) {
     component.removeAttribute(`disabled`);
   }
+};
+
+
+export const createOffersSet = (data) => {
+  return data.reduce((acc, item) => {
+    if (acc[item.type] === undefined) {
+      acc[item.type] = [];
+    }
+    acc[item.type] = item.offers;
+    return acc;
+  }, {});
+};
+
+export const createDestinationsSet = (data) => {
+  return data.reduce((acc, item) => {
+    if (acc[item.name] === undefined) {
+      acc[item.name] = [];
+    }
+    acc[item.name] = item;
+    return acc;
+  }, {});
 };

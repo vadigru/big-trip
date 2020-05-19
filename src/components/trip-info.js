@@ -3,20 +3,14 @@ import {parseDate} from '../utils/common.js';
 
 const getTripCities = (pointsArr, citiesArr, startDatesArr, endDatesArr) => {
   let str = ``;
-
   if (citiesArr.length <= 2) {
-    str = `${startDatesArr[0].city}
-    &nbsp;&mdash;&nbsp; ${startDatesArr[startDatesArr.length - 1].city}`;
+    str = `${startDatesArr[0].city} &nbsp;&mdash;&nbsp; ${startDatesArr[startDatesArr.length - 1].city}`;
   }
   if (citiesArr.length === 3) {
-    str = `${startDatesArr[0].city}
-    &nbsp;&mdash;&nbsp; ${startDatesArr[1].city} &nbsp;&mdash;&nbsp;
-    ${startDatesArr[startDatesArr.length - 1].city}`;
+    str = `${startDatesArr[0].city} &nbsp;&mdash;&nbsp; ${startDatesArr[1].city} &nbsp;&mdash;&nbsp; ${startDatesArr[startDatesArr.length - 1].city}`;
   }
   if (citiesArr.length > 3) {
-    str = `${startDatesArr[0].city}
-    &nbsp;&mdash;&nbsp; ... &nbsp;&mdash;&nbsp;
-    ${endDatesArr[endDatesArr.length - 1].city}`;
+    str = `${startDatesArr[0].city} &nbsp;&mdash;&nbsp; ... &nbsp;&mdash;&nbsp; ${endDatesArr[endDatesArr.length - 1].city}`;
   }
   return str;
 };

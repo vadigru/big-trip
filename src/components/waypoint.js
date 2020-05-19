@@ -58,13 +58,12 @@ export default class Waypoint extends AbstractComponent {
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">
             ${offers
-              .filter((offer) => offer.checked)
               .slice(0, 3)
               .map((offer) => {
-                const {name, price: cost} = offer;
+                const {title, price: cost} = offer;
                 return (
                   `<li class="event__offer">
-                  <span class="event__offer-title">${name}</span>
+                  <span class="event__offer-title">${title}</span>
                   &plus;
                   &euro;&nbsp;<span class="event__offer-price">${cost}</span>
                 </li>`

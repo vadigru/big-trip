@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 
-export default class TripCost extends AbstractComponent {
+export default class TripDayEntry extends AbstractComponent {
   constructor(date, dateIndex) {
     super();
     this._date = date;
@@ -14,18 +14,19 @@ export default class TripCost extends AbstractComponent {
             <span class="day__counter">
               ${this._dateIndex || ``}
             </span>
-            <time
-              class="day__date"
+            <time class="day__date"
               datetime="${this._date || ``}">
               ${(this._date && new Date(this._date).toLocaleString(`en-US`, {
         month: `short`,
         day: `numeric`
       })) || ``}
-            </timeclass="day__date">
+            </time>
           </div>
 
-          <ul class="trip-events__list">
-          </ul>
+
+        <ul class="trip-events__list">
+        </ul>
+
         </li>`
     );
   }
