@@ -10,10 +10,7 @@ import PointsModel from './models/points.js';
 import {renderElement, RenderPosition, remove} from './utils/render.js';
 import {MenuItem, MENU_ITEMS, FilterType, SortType} from './const.js';
 
-const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
-const AUTHORIZATION = `Basic &&jUjUjkkollkjj=`;
-
-const api = new API(END_POINT, AUTHORIZATION);
+const api = new API();
 const pointsModel = new PointsModel();
 
 const headerElement = document.querySelector(`.trip-main`);
@@ -24,7 +21,7 @@ const menuComponent = new MenuComponent(MENU_ITEMS);
 const tripDaysComponent = new TripDaysComponent();
 const filterController = new FilterController(menuElement, pointsModel);
 const statsComponent = new StatsComponent(pointsModel);
-const tripController = new TripController(tripDaysComponent, pointsModel, api);
+const tripController = new TripController(tripDaysComponent, pointsModel, api, filterController);
 const tripPointsLoading = new TripPointsLoadind();
 
 renderElement(menuElement, menuComponent);
@@ -33,7 +30,6 @@ renderElement(headerElement, new TripMainInfoComponent(), RenderPosition.AFTERBE
 renderElement(eventElement, statsComponent, RenderPosition.BEFOREEND);
 renderElement(eventElement, tripPointsLoading);
 
-filterController.render();
 statsComponent.hide();
 
 const newPointElement = document.querySelector(`.trip-main__event-add-btn`);
@@ -48,7 +44,6 @@ newPointElement.addEventListener(`click`, () => {
   tripController._sortPoints(SortType.DEFAULT);
   tripController.createPoint();
 });
-
 
 menuComponent.setChangeHandler((menuItem) => {
   switch (menuItem) {
@@ -75,4 +70,5 @@ Promise.all([
   pointsModel.setDestinations(destinations);
   remove(tripPointsLoading);
   tripController.render();
+  filterController.render();
 });

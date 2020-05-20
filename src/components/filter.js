@@ -25,7 +25,9 @@ export default class Filter extends AbstractComponent {
               type="radio"
               name="trip-filter"
               value="${filter.name}"
-              ${filter.checked && `checked`}>
+              ${filter.checked && `checked`}
+              ${filter.disabled && `disabled`}
+              >
             <label
               class="trip-filters__filter-label"
               for="filter-${filter.name}">

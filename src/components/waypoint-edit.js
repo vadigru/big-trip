@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {TRANSFER_TYPES, ACTIVITY_TYPES, PointTypeToPretext} from '../const.js';
+import {TRANSFER_TYPES, ACTIVITY_TYPES, PointTypeToPretext, Mode} from '../const.js';
 import {capitalizeFirstLetter} from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import {encode} from 'he';
@@ -36,6 +36,7 @@ export default class WaypointEdit extends AbstractSmartComponent {
     this._clickHandler = null;
     this._saveButtonClickHandler = null;
     this._deleteButtonClickHandler = null;
+
     this._smartPrice = null;
     this._smartCity = null;
     this._subscribeOnEvents();
@@ -133,7 +134,7 @@ export default class WaypointEdit extends AbstractSmartComponent {
                   </svg>
                 </label>
 
-              <button class="event__rollup-btn" type="button">
+              <button class="event__rollup-btn event__rollup-hidenew" type="button">
                 <span class="visually-hidden">Open event</span>
               </button>` : ``}
 
@@ -235,11 +236,27 @@ export default class WaypointEdit extends AbstractSmartComponent {
     this._subscribeOnEvents();
   }
 
+  setClickHandler(handler) {
+    if (!this._point.isNew) {
+      this.getElement()
+      .querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, handler);
+      this._clickHandler = handler;
+    }
+  }
+
   setSaveButtonClickHandler(handler) {
-    this.getElement().addEventListener(`submit`, (evt) => {
-      this._validate();
-      handler(evt);
-    });
+    const form = this._mode === Mode.ADDING
+      ? this.getElement()
+      : this.getElement().querySelector(`form`);
+
+    if (this.getElement().querySelector(`.event__favorite-checkbox`)) {
+      form.querySelector(`.event__favorite-checkbox`).addEventListener(`click`, (evt) => {
+        handler(evt);
+      });
+    }
+    form.addEventListener(`submit`, handler);
+    this._validate();
     this._saveButtonClickHandler = handler;
   }
 
@@ -250,14 +267,6 @@ export default class WaypointEdit extends AbstractSmartComponent {
     this._deleteButtonClickHandler = handler;
   }
 
-  setClickHandler(handler) {
-    if (!this._point.isNew) {
-      this.getElement()
-      .querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, handler);
-      this._clickHandler = handler;
-    }
-  }
 
   setData(data) {
     this._externalData = Object.assign({}, DefaultData, data);
@@ -335,7 +344,6 @@ export default class WaypointEdit extends AbstractSmartComponent {
 
   _subscribeOnEvents() {
     const element = this.getElement();
-
 
     element.querySelector(`.event__type-list`)
     .addEventListener(`click`, (evt) => {
