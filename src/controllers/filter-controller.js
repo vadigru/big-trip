@@ -8,9 +8,9 @@ export default class FilterController {
     this._pointsModel = pointsModel;
     this._activeFilterType = FilterType.EVERYTHING;
     this._filterComponent = null;
-    this._onDataChange = this._onDataChange.bind(this);
+    // this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
-    this._pointsModel.setDataChangeHandler(this._onDataChange);
+    // this._pointsModel.setDataChangeHandler(this._onDataChange);
   }
 
   render() {
@@ -19,6 +19,8 @@ export default class FilterController {
       return {
         name: filterType,
         checked: filterType === this._activeFilterType,
+        disabled: this._pointsModel.getPoints(filterType).length === 0
+
       };
     });
     const oldComponent = this._filterComponent;
@@ -36,10 +38,10 @@ export default class FilterController {
   _onFilterChange(filterType) {
     this._activeFilterType = filterType;
     this._pointsModel.setFilter(filterType);
-    this.render();
+    // this.render();
   }
 
-  _onDataChange() {
-    this.render();
-  }
+  // _onDataChange() {
+  // this.render();
+  // }
 }

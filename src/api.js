@@ -1,5 +1,13 @@
 import Point from './models/point.js';
 
+// const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
+// const AUTHORIZATION = `Basic &&jUjUjkkollkjj=`;
+
+const AccessData = {
+  END_POINT: `https://11.ecmascript.pages.academy/big-trip`,
+  AUTHORIZATION: `Basic &&jUjUjkkoll3dj=`
+};
+
 const Method = {
   GET: `GET`,
   POST: `POST`,
@@ -15,9 +23,9 @@ const checkStatus = (response) => {
   }
 };
 export default class API {
-  constructor(endPoint, authorization) {
-    this._endPoint = endPoint;
-    this._authorization = authorization;
+  constructor() {
+    this._endPoint = AccessData.END_POINT;
+    this._authorization = AccessData.AUTHORIZATION;
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

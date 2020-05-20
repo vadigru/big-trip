@@ -6,7 +6,7 @@ import {Mode} from '../const.js';
 import moment from 'moment';
 import {encode} from 'he';
 
-const SHAKE_ANIMATION_TIMEOUT = 10000;
+const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export const EmptyPoint = {
   type: `taxi`,
@@ -57,6 +57,7 @@ export default class PointController {
     this._waypointEditComponent = null;
     this._mode = Mode.DEFAULT;
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
+    this._choosedSubmitValue = null;
   }
 
   render(point, mode) {
@@ -78,14 +79,20 @@ export default class PointController {
 
     this._waypointEditComponent.setSaveButtonClickHandler((evt)=> {
       evt.preventDefault();
+      this._choosedSubmitValue = evt.target.value;
       const formData = this._waypointEditComponent.getData();
-      const data = parseFormData(formData, this._destinationsSet, point.id);
       this._waypointEditComponent.disableForm();
-      this._waypointEditComponent.setData({
-        saveButtonText: `Saving...`,
-      });
-
-      this._onDataChange(this, point, data);
+      let pointData = null;
+      if (this._choosedSubmitValue === `on`) {
+        pointData = point;
+        pointData.isFavorite = !pointData.isFavorite;
+      } else {
+        pointData = parseFormData(formData, this._destinationsSet, point.id);
+        this._waypointEditComponent.setData({
+          saveButtonText: `Saving...`,
+        });
+      }
+      this._onDataChange(this, point, pointData);
       this._waypointEditComponent.activateForm();
     });
 
@@ -108,6 +115,11 @@ export default class PointController {
               this._container,
               this._waypointComponent
           );
+        }
+        break;
+      case Mode.EDIT:
+        if (oldWaypointEditComponent) {
+          replaceElement(this._waypointEditComponent, oldWaypointEditComponent);
         }
         break;
       case Mode.ADDING:
