@@ -134,7 +134,7 @@ export default class WaypointEdit extends AbstractSmartComponent {
                   </svg>
                 </label>
 
-              <button class="event__rollup-btn event__rollup-hidenew" type="button">
+              <button class="event__rollup-btn" type="button">
                 <span class="visually-hidden">Open event</span>
               </button>` : ``}
 
