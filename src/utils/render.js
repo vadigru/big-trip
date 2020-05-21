@@ -22,14 +22,12 @@ export const renderElement = (container, component, place = RenderPosition.BEFOR
 };
 
 export const replaceElement = (newComponent, oldComponent) => {
-  let parentElement = oldComponent.getElement().parentElement;
+  const parentElement = oldComponent.getElement().parentElement;
   const newElement = newComponent.getElement();
   const oldElement = oldComponent.getElement();
-
   const isExistElements = !!(parentElement && newElement && oldElement);
-  parentElement.replaceChild(newElement, oldElement);
 
-  if (isExistElements && parentElement.contains(oldElement)) {
+  if (isExistElements) {
     parentElement.replaceChild(newElement, oldElement);
   }
 };

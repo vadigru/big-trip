@@ -1,11 +1,8 @@
 import Point from './models/point.js';
 
-// const END_POINT = `https://11.ecmascript.pages.academy/big-trip`;
-// const AUTHORIZATION = `Basic &&jUjUjkkollkjj=`;
-
 const AccessData = {
   END_POINT: `https://11.ecmascript.pages.academy/big-trip`,
-  AUTHORIZATION: `Basic &&jUjUjkkoll3dj=`
+  AUTHORIZATION: `Basic &&jUjUjk$kl3Eddj=`
 };
 
 const Method = {

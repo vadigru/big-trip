@@ -56,7 +56,6 @@ export const enableComponent = (className) => {
   }
 };
 
-
 export const createOffersSet = (data) => {
   return data.reduce((acc, item) => {
     if (acc[item.type] === undefined) {

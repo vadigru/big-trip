@@ -1,6 +1,6 @@
 import TripInfoComponent from '../components/trip-info.js';
 import TripCostComponent from '../components/trip-cost.js';
-import TripSort from '../components/sort.js';
+import TripSortComponent from '../components/sort.js';
 import TripDayEntryComponent from '../components/trip-day-entry.js';
 import PointController from '../controllers/point-controller.js';
 import NoWaypointComponent from '../components/trip-day-no-points.js';
@@ -48,7 +48,7 @@ export default class TripController {
 
     this._newPointControllers = [];
     this._showedPointControllers = [];
-    this._sortComponent = new TripSort();
+    this._sortComponent = new TripSortComponent();
     this._tripInfoComponent = null;
     this._tripCostComponent = null;
     this._creatingPoint = null;
@@ -67,16 +67,11 @@ export default class TripController {
     this._eventElement = document.querySelector(`.trip-events`);
   }
 
-
   createPoint() {
     disableComponent(`trip-main__event-add-btn`);
 
     if (this._creatingPoint) {
       return;
-    }
-
-    if (this._noWaypointComponent) {
-      remove(this._noWaypointComponent);
     }
 
     this._creatingPoint = new PointController(
@@ -89,6 +84,9 @@ export default class TripController {
 
     this._showedPointControllers = [].concat(this._creatingPoint, this._showedPointControllers);
     this._creatingPoint.render(EmptyPoint, Mode.ADDING);
+
+    this._removeNoWaypoint();
+    this._sortComponent.show();
   }
 
   _updatePoints() {
@@ -107,18 +105,27 @@ export default class TripController {
   hide() {
     this._container.hide();
     this._sortComponent.hide();
+    this._removeNoWaypoint();
+  }
+
+  show() {
+    this._container.show();
+    this._sortComponent.show();
+    this._renderNoWaypoint();
+  }
+
+  _removeNoWaypoint() {
     if (this._noWaypointComponent) {
       remove(this._noWaypointComponent);
       this._noWaypointComponent = null;
     }
   }
 
-  show() {
-    this._container.show();
-    this._sortComponent.show();
-    if (!this._noWaypointComponent && this._pointsModel.getPoints().length === 0) {
+  _renderNoWaypoint() {
+    if (!this._noWaypointComponent && this._pointsModel.getPointsAll().length === 0) {
       this._noWaypointComponent = new NoWaypointComponent();
       renderElement(this._eventElement, this._noWaypointComponent);
+      this._sortComponent.hide();
     }
   }
 
@@ -128,29 +135,22 @@ export default class TripController {
       remove(this._tripInfoComponent);
       remove(this._tripCostComponent);
     }
-    this._tripInfoComponent = new TripInfoComponent(this._pointsModel.getPoints());
-    this._tripCostComponent = new TripCostComponent(this._pointsModel.getPoints());
+    this._tripInfoComponent = new TripInfoComponent(this._pointsModel.getPointsAll());
+    this._tripCostComponent = new TripCostComponent(this._pointsModel.getPointsAll());
     renderElement(infoElement, this._tripInfoComponent);
     renderElement(infoElement, this._tripCostComponent);
-    getFullPrice(this._pointsModel.getPoints(), this._offersSet);
+    getFullPrice(this._pointsModel.getPointsAll(), this._offersSet);
   }
 
   render() {
-    if (this._pointsModel.getPoints().length === 0) {
-      this._noWaypointComponent = new NoWaypointComponent();
-      renderElement(this._eventElement, this._noWaypointComponent);
-      remove(this._sortComponent);
-    }
-
     this._renderInfo();
     renderElement(this._eventElement, this._sortComponent, RenderPosition.AFTERBEGIN);
-
+    this._renderNoWaypoint();
     this._sortComponent.setSortTypeChangeHandler((sortType) => {
       this._sortPoints(sortType);
     });
-
     this._sortPoints(SortType.DEFAULT);
-    getFullPrice(this._pointsModel.getPoints(), this._offersSet);
+    getFullPrice(this._pointsModel.getPointsAll(), this._offersSet);
   }
 
   _onDataChange(pointController, oldPoint, newPoint) {
@@ -158,6 +158,7 @@ export default class TripController {
       this._creatingPoint = null;
       if (newPoint === null) {
         pointController.destroy();
+        this.render();
       } else {
         this._api.createPoint(newPoint)
         .then((pointModel) => {
@@ -186,7 +187,7 @@ export default class TripController {
       this._api.updatePoint(oldPoint.id, newPoint)
          .then((point) => {
            const isSuccess = this._pointsModel.updatePoint(oldPoint.id, point);
-           if (isSuccess && pointController._choosedSubmitValue !== `on`) {
+           if (isSuccess && pointController._submitValue !== `on`) {
              this._updatePoints();
              this._renderInfo();
              this._onFilterChange();

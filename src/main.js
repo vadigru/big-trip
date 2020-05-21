@@ -22,7 +22,7 @@ const tripDaysComponent = new TripDaysComponent();
 const filterController = new FilterController(menuElement, pointsModel);
 const statsComponent = new StatsComponent(pointsModel);
 const tripController = new TripController(tripDaysComponent, pointsModel, api, filterController);
-const tripPointsLoading = new TripPointsLoadind();
+let tripPointsLoading = new TripPointsLoadind();
 
 renderElement(menuElement, menuComponent);
 renderElement(eventElement, tripDaysComponent);
@@ -33,7 +33,7 @@ renderElement(eventElement, tripPointsLoading);
 statsComponent.hide();
 
 const newPointElement = document.querySelector(`.trip-main__event-add-btn`);
-
+newPointElement.disabled = true;
 newPointElement.addEventListener(`click`, () => {
   if (statsComponent) {
     statsComponent.hide();
@@ -51,11 +51,18 @@ menuComponent.setChangeHandler((menuItem) => {
       menuComponent.setSelectedItem(MenuItem.TABLE);
       statsComponent.hide();
       tripController.show();
+      if (tripPointsLoading && tripController._noWaypointComponent) {
+        remove(tripController._noWaypointComponent);
+        renderElement(eventElement, tripPointsLoading);
+      }
       break;
     case MenuItem.STATS:
       menuComponent.setSelectedItem(MenuItem.STATS);
       statsComponent.show();
       tripController.hide();
+      if (tripPointsLoading) {
+        remove(tripPointsLoading);
+      }
       break;
   }
 });
@@ -69,6 +76,8 @@ Promise.all([
   pointsModel.setOffers(offers);
   pointsModel.setDestinations(destinations);
   remove(tripPointsLoading);
+  tripPointsLoading = null;
   tripController.render();
   filterController.render();
+  newPointElement.disabled = false;
 });
