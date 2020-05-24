@@ -15,19 +15,6 @@ export const FilterType = {
   PAST: `past`
 };
 
-export const PointTypeToPretext = {
-  "taxi": `to`,
-  "bus": `to`,
-  "train": `to`,
-  "ship": `to`,
-  "transport": `to`,
-  "drive": `to`,
-  "flight": `to`,
-  "check-in": `in`,
-  "sightseeing": `in`,
-  "restaurant": `in`
-};
-
 export const SortType = {
   DEFAULT: `sort-event`,
   TIME: `sort-time`,

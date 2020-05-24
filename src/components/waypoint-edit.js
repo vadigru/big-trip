@@ -1,5 +1,5 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import {PointTypeToPretext, Mode, TRANSFER_TYPES, ACTIVITY_TYPES, DESTINATION_UKNOWN} from '../const.js';
+import {Mode, TRANSFER_TYPES, ACTIVITY_TYPES, DESTINATION_UKNOWN} from '../const.js';
 import {capitalizeFirstLetter} from '../utils/common.js';
 import flatpickr from 'flatpickr';
 import {encode} from 'he';
@@ -90,7 +90,7 @@ export default class WaypointEdit extends AbstractSmartComponent {
 
             <div class="event__field-group  event__field-group--destination">
               <label class="event__label  event__type-output" for="event-destination-${this._id}">
-                ${capitalizeFirstLetter(this._type)} ${PointTypeToPretext[this._type]}
+                ${capitalizeFirstLetter(this._type)} ${TRANSFER_TYPES.includes(this._type) ? `to` : `in`}
               </label>
               <input class="event__input  event__input--destination" id="event-destination-${this._id}" type="text" name="event-destination" value="${this._smartCity ? this._smartCity : this._city}" list="destination-list-${this._id}" required>
               <datalist id="destination-list-${this._id}">
