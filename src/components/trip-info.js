@@ -1,16 +1,16 @@
 import AbstractComponent from './abstract-component.js';
 import {parseDate} from '../utils/common.js';
 
-const getTripCities = (pointsArr, citiesArr, startDatesArr, endDatesArr) => {
+const getTripCities = (citiesArr, startDates) => {
   let str = ``;
   if (citiesArr.length <= 2) {
-    str = `${startDatesArr[0].city} &nbsp;&mdash;&nbsp; ${startDatesArr[startDatesArr.length - 1].city}`;
+    str = `${startDates[0].city} &nbsp;&mdash;&nbsp; ${startDates[startDates.length - 1].city}`;
   }
   if (citiesArr.length === 3) {
-    str = `${startDatesArr[0].city} &nbsp;&mdash;&nbsp; ${startDatesArr[1].city} &nbsp;&mdash;&nbsp; ${startDatesArr[startDatesArr.length - 1].city}`;
+    str = `${citiesArr[0]} &nbsp;&mdash;&nbsp; ${citiesArr[1]} &nbsp;&mdash;&nbsp; ${citiesArr[citiesArr.length - 1]}`;
   }
   if (citiesArr.length > 3) {
-    str = `${startDatesArr[0].city} &nbsp;&mdash;&nbsp; ... &nbsp;&mdash;&nbsp; ${endDatesArr[endDatesArr.length - 1].city}`;
+    str = `${startDates[0].city} &nbsp;&mdash;&nbsp; ... &nbsp;&mdash;&nbsp; ${startDates[startDates.length - 1].city}`;
   }
   return str;
 };
@@ -21,7 +21,7 @@ export default class TripInfo extends AbstractComponent {
     this._points = points;
     this._startDates = this._points.slice().sort((a, b) => a.startDate - b.startDate);
     this._endDates = this._points.slice().sort((a, b) => a.endDate - b.endDate);
-    this._cities = [...new Set(points.map((it) => it.city))];
+    this._cities = [...new Set(this._points.map((it) => it.city))];
   }
 
   getTemplate() {
@@ -32,7 +32,7 @@ export default class TripInfo extends AbstractComponent {
       </div>` :
         `<div class="trip-info__main">
         <h1 class="trip-info__title">
-        ${getTripCities(this._points, this._cities, this._startDates, this._endDates)}
+        ${getTripCities(this._cities, this._startDates)}
         </h1>
 
         <p class="trip-info__dates">
@@ -44,5 +44,4 @@ export default class TripInfo extends AbstractComponent {
       }`
     );
   }
-
 }

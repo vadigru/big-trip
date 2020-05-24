@@ -57,7 +57,7 @@ export default class PointController {
     this._waypointEditComponent = null;
     this._mode = Mode.DEFAULT;
     this._onEscKeyDown = this._onEscKeyDown.bind(this);
-    this._choosedSubmitValue = null;
+    this._submitValue = null;
   }
 
   render(point, mode) {
@@ -77,13 +77,12 @@ export default class PointController {
       this._replaceWaypointEditToWaypoint();
     });
 
-    this._waypointEditComponent.setSaveButtonClickHandler((evt)=> {
+    this._waypointEditComponent.setSubmitClickHandler((evt)=> {
       evt.preventDefault();
-      this._choosedSubmitValue = evt.target.value;
       const formData = this._waypointEditComponent.getData();
-      this._waypointEditComponent.disableForm();
+      this._submitValue = evt.target.value;
       let pointData = null;
-      if (this._choosedSubmitValue === `on`) {
+      if (this._submitValue === `on`) {
         pointData = point;
         pointData.isFavorite = !pointData.isFavorite;
       } else {
@@ -91,16 +90,18 @@ export default class PointController {
         this._waypointEditComponent.setData({
           saveButtonText: `Saving...`,
         });
+        this._waypointEditComponent.disableForm();
       }
+      this._waypointEditComponent.hideBorder();
       this._onDataChange(this, point, pointData);
-      this._waypointEditComponent.activateForm();
     });
 
     this._waypointEditComponent.setDeleteButtonClickHandler(() => {
       this._waypointEditComponent.setData({
         deleteButtonText: `Deleting...`,
       });
-
+      this._waypointEditComponent.hideBorder();
+      this._waypointEditComponent.disableForm();
       this._onDataChange(this, point, null);
     });
 
@@ -150,7 +151,7 @@ export default class PointController {
       });
     }, SHAKE_ANIMATION_TIMEOUT);
 
-
+    setTimeout(() => this._waypointEditComponent.showBorder(), SHAKE_ANIMATION_TIMEOUT);
   }
 
   _replaceWaypointToWaypointEdit() {
