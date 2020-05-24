@@ -1,7 +1,7 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import Chart from "chart.js";
+import Chart from 'chart.js';
 import chartjsPluginDatalabels from 'chartjs-plugin-datalabels';
-import moment from "moment";
+import moment from 'moment';
 
 const ChartIconToPretext = {
   "taxi": `in`,
@@ -94,10 +94,12 @@ const generateChartsData = (points) => {
     .map((item) => {
       return [
         `${emojiMap[item[0]]} ${ChartIconToPretext[item[0]].toUpperCase()} ${item[0].toUpperCase()}`,
-        Math.round(moment.duration(item[1], `milliseconds`).asHours())
+        moment.duration(item[1], `milliseconds`).asMinutes() >= 60
+          ? Math.round(moment.duration(item[1], `milliseconds`).asHours())
+          : (moment.duration(item[1], `milliseconds`).asMinutes() / 100)
+
       ];
-    })
-    .filter((item) => item[1] !== 0);
+    });
 
   return {
     moneyData,
