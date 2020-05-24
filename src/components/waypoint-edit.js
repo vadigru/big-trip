@@ -193,7 +193,7 @@ export default class WaypointEdit extends AbstractSmartComponent {
                       `<img
                         class="event__photo"
                         src="${photo.src}"
-                        alt="Event photo"
+                        alt="${photo.description}"
                       />`
                     );
                   })
@@ -404,11 +404,11 @@ export default class WaypointEdit extends AbstractSmartComponent {
     element.querySelector(`.event__input--price`)
     .addEventListener(`input`, (evt) => {
       const outputElement = element.querySelector(`.event__input--price`);
-      this._smartPrice = encode(evt.target.value);
-      if (!this._smartPrice.match(/[^0-9]/g)) {
-        return;
+      this._smartPrice = evt.target.value;
+      const reg = /\D+/g;
+      if (this._smartPrice.match(reg)) {
+        outputElement.value = this._smartPrice.replace(reg, ``);
       }
-      outputElement.value = this._smartPrice.replace((/[^0-9]/g), ``);
     });
 
     if (!this._isNew) {
