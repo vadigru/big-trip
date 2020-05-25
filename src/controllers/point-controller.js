@@ -64,7 +64,6 @@ export default class PointController {
     const oldWaypointComponent = this._waypointComponent;
     const oldWaypointEditComponent = this._waypointEditComponent;
     this._mode = mode;
-
     this._waypointComponent = new WaypointComponent(point);
     this._waypointEditComponent = new WaypointEditComponent(point, this._offersSet, this._destinationsSet);
 
@@ -141,14 +140,11 @@ export default class PointController {
   shake() {
     this._waypointEditComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
     this._waypointComponent.getElement().style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
     setTimeout(() => {
       this._waypointEditComponent.getElement().style.animation = ``;
       this._waypointComponent.getElement().style.animation = ``;
-
-      this._waypointEditComponent.setData({
-        saveButtonText: `Save`,
-        deleteButtonText: `Delete`,
-      });
+      this._waypointEditComponent.setData({saveButtonText: `Save`, deleteButtonText: `Delete`});
     }, SHAKE_ANIMATION_TIMEOUT);
 
     setTimeout(() => this._waypointEditComponent.showBorder(), SHAKE_ANIMATION_TIMEOUT);

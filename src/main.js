@@ -1,4 +1,6 @@
-import API from './api.js';
+import API from './api/index.js';
+import Provider from "./api/provider.js";
+import Store from "./api/store.js";
 import FilterController from './controllers/filter-controller.js';
 import MenuComponent from './components/menu.js';
 import StatsComponent from './components/stats.js';
@@ -10,7 +12,13 @@ import PointsModel from './models/points.js';
 import {renderElement, RenderPosition, remove} from './utils/render.js';
 import {MenuItem, MENU_ITEMS, FilterType, SortType} from './const.js';
 
+const STORE_PREFIX = `bigtrip-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
 const api = new API();
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 const pointsModel = new PointsModel();
 
 const headerElement = document.querySelector(`.trip-main`);
@@ -21,7 +29,7 @@ const menuComponent = new MenuComponent(MENU_ITEMS);
 const tripDaysComponent = new TripDaysComponent();
 const filterController = new FilterController(menuElement, pointsModel);
 const statsComponent = new StatsComponent(pointsModel);
-const tripController = new TripController(tripDaysComponent, pointsModel, api, filterController);
+const tripController = new TripController(tripDaysComponent, pointsModel, apiWithProvider, filterController);
 let tripPointsLoading = new TripPointsLoadind();
 
 renderElement(menuElement, menuComponent);
@@ -68,9 +76,9 @@ menuComponent.setChangeHandler((menuItem) => {
 });
 
 Promise.all([
-  api.getPoints(),
-  api.getOffers(),
-  api.getDestinations()
+  apiWithProvider.getPoints(),
+  apiWithProvider.getOffers(),
+  apiWithProvider.getDestinations()
 ]).then(([points, offers, destinations]) => {
   pointsModel.setPoints(points);
   pointsModel.setOffers(offers);
@@ -80,4 +88,17 @@ Promise.all([
   tripController.render();
   filterController.render();
   newPointElement.disabled = false;
+});
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`);
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` ⚠️ offline`, ``);
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` ⚠️ offline`;
 });

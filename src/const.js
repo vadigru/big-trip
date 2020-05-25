@@ -65,3 +65,9 @@ export const TRANSFER_TYPES = [
   `drive`,
   `flight`,
 ];
+
+export const URL = {
+  POINTS: `points`,
+  DESTINATIONS: `destinations`,
+  OFFERS: `offers`
+};

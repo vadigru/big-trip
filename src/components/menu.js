@@ -27,14 +27,14 @@ export default class Menu extends AbstractComponent {
     );
   }
 
-  setSelectedItem(selectedItem) {
+  setSelectedItem(selectedButton) {
     this.getElement()
       .querySelectorAll(`.trip-tabs__btn`)
-      .forEach((item) => {
-        if (item.id === selectedItem) {
-          item.classList.add(SELECTED_ITEM_CLASS);
+      .forEach((button) => {
+        if (button.id === selectedButton) {
+          button.classList.add(SELECTED_ITEM_CLASS);
         } else {
-          item.classList.remove(SELECTED_ITEM_CLASS);
+          button.classList.remove(SELECTED_ITEM_CLASS);
         }
       });
   }
