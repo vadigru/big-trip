@@ -369,7 +369,10 @@ export default class WaypointEdit extends AbstractSmartComponent {
     element.querySelector(`.event__input--destination`)
       .addEventListener(`change`, (evt) => {
         this._smartCity = encode(evt.target.value);
-        this._description = (this._smartCity === ``) ? `` : this._photos = [];
+        if (this._smartCity === ``) {
+          this._description = ``;
+          this._photos = [];
+        }
         if (this._smartCity !== ``) {
           if (Object.keys(this._destinationsSet).includes(this._smartCity)) {
             this._description = this._destinationsSet[this._smartCity].description;

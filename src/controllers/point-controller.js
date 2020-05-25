@@ -22,7 +22,7 @@ export const EmptyPoint = {
 };
 
 const parseFormData = (formData, destination, id) => {
-  const city = document.querySelector(`input[name="event-destination"]`).value;
+  const cityElement = document.querySelector(`input[name="event-destination"]`).value;
   const checkedOffers = [
     ...document.querySelectorAll(`.event__offer-checkbox:checked + label[for^="event"]`)
   ];
@@ -38,9 +38,9 @@ const parseFormData = (formData, destination, id) => {
       "price": Number(offer.querySelector(`.event__offer-price`).textContent)
     })),
     "destination": {
-      "description": destination[city].description,
-      "name": destination[city].name,
-      "pictures": destination[city].pictures
+      "description": destination[cityElement].description,
+      "name": destination[cityElement].name,
+      "pictures": destination[cityElement].pictures
     },
     "is_favorite": formData.get(`event-favorite`) === `on`
   });
