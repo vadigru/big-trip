@@ -10,11 +10,7 @@ import TripMainInfoComponent from './components/trip-main-info.js';
 import TripPointsLoadind from './components/trip-points-loading.js';
 import PointsModel from './models/points.js';
 import {renderElement, RenderPosition, remove} from './utils/render.js';
-import {MenuItem, MENU_ITEMS, FilterType, SortType} from './const.js';
-
-const STORE_PREFIX = `bigtrip-localstorage`;
-const STORE_VER = `v1`;
-const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+import {FilterType, MenuItem, SortType, MENU_ITEMS, STORE_NAME} from './const.js';
 
 const headerElement = document.querySelector(`.trip-main`);
 const menuElement = document.querySelector(`.trip-controls`);

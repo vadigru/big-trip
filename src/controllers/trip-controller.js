@@ -7,11 +7,30 @@ import PointController from '../controllers/point-controller.js';
 import {EmptyPoint} from '../controllers/point-controller.js';
 import {Mode, SortType} from '../const.js';
 import {renderElement, remove, RenderPosition} from '../utils/render.js';
-import {enableComponent, disableComponent, getFullPrice} from '../utils/common.js';
+
+const disableComponent = (className) => {
+  const componentElement = document.querySelector(`.${className}`);
+  if (!componentElement.getAttribute(`disabled`)) {
+    componentElement.setAttribute(`disabled`, `disabled`);
+  }
+};
+
+const enableComponent = (className) => {
+  const componentElement = document.querySelector(`.${className}`);
+  if (componentElement.getAttribute(`disabled`)) {
+    componentElement.removeAttribute(`disabled`);
+  }
+};
+
+const getFullPrice = (arr) => {
+  const totalCostElement = document.querySelector(`.trip-info__cost-value`);
+  totalCostElement.textContent = arr.reduce((total, offer) => parseInt(total, 10) + parseInt(offer.price, 10)
+                               + offer.offers.reduce((acc, it) => parseInt(acc, 10) + parseInt(it.price, 10), 0), 0);
+};
 
 const renderTrip = (points, offers, destinations, container, onDataChange, onViewChange, isDefaultSort = true) => {
   const pointControllers = [];
-  let dates = isDefaultSort
+  const dates = isDefaultSort
     ? [...new Set(points.map((it) => new Date(it.startDate).toDateString()))]
     : [``];
 
@@ -135,27 +154,36 @@ export default class TripController {
 
   _sortPoints(sortType) {
     let sortedPoints = [];
+    this._isDefaultSort = false;
+
+    let timeDescendingOrder = (a, b) => {
+      const aa = a.endDate - a.startDate;
+      const bb = b.endDate - b.startDate;
+      return bb - aa;
+    };
+
+    let priceDescendingOrder = (a, b) => {
+      return b.price - a.price;
+    };
+
+    let dateAscendingOrder = (a, b) => {
+      return a.startDate - b.startDate;
+    };
+
     switch (sortType) {
       case SortType.TIME:
-        sortedPoints = this._pointsModel.getPoints().slice().sort((a, b) => {
-          const aa = a.endDate - a.startDate;
-          const bb = b.endDate - b.startDate;
-          return bb - aa;
-        });
-        this._isDefaultSort = false;
-        this._currentSortType = sortType;
+        sortedPoints = this._pointsModel.getPoints().slice().sort(timeDescendingOrder);
         break;
       case SortType.PRICE:
-        sortedPoints = this._pointsModel.getPoints().slice().sort((a, b) => b.price - a.price);
-        this._isDefaultSort = false;
-        this._currentSortType = sortType;
+        sortedPoints = this._pointsModel.getPoints().slice().sort(priceDescendingOrder);
         break;
       case SortType.DEFAULT:
-        sortedPoints = this._pointsModel.getPoints().slice().sort((a, b) => a.startDate - b.startDate);
+        sortedPoints = this._pointsModel.getPointsAll().slice().sort(dateAscendingOrder);
         this._isDefaultSort = true;
-        this._currentSortType = sortType;
         break;
     }
+
+    this._currentSortType = sortType;
     this._checkSortType(sortType);
     this._creatingPoint = null;
     this._removePoints();

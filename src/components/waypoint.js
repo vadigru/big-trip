@@ -3,7 +3,7 @@ import {parseTime, capitalizeFirstLetter} from '../utils/common.js';
 import {TRANSFER_TYPES} from '../const.js';
 
 const getDateDiff = (startDate, endDate) => {
-  let days = Math.floor(((endDate - startDate) / 86400000));
+  const days = Math.floor(((endDate - startDate) / 86400000));
   let hours = endDate - startDate > 0 ? 0 : 24;
   hours += Math.floor(((endDate - startDate) % 86400000) / 3600000);
   let minutes = endDate - startDate > 0 ? 0 : 60;

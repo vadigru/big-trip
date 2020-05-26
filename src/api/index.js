@@ -6,6 +6,11 @@ const AccessData = {
   AUTHORIZATION: `Basic &&jUjUEfK7%kl3Eddj=`
 };
 
+const HttpCode = {
+  SUCCESS: 200,
+  REDIRECTION: 300
+};
+
 const Method = {
   GET: `GET`,
   POST: `POST`,
@@ -13,13 +18,8 @@ const Method = {
   DELETE: `DELETE`
 };
 
-const Code = {
-  SUCCESS: 200,
-  REDIRECTION: 300
-};
-
 const checkStatus = (response) => {
-  if (response.status >= Code.SUCCESS && response.status < Code.REDIRECTION) {
+  if (response.status >= HttpCode.SUCCESS && response.status < HttpCode.REDIRECTION) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);

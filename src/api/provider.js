@@ -8,7 +8,7 @@ const isOnline = () => {
 
 const getSyncedPoints = (items) => {
   return items.filter(({success}) => success)
-    .map(({payload}) => payload.task);
+    .map(({payload}) => payload.point);
 };
 
 const createStoreStructure = (items) => {
@@ -99,8 +99,8 @@ export default class Provider {
 
   sync() {
     if (isOnline()) {
-      const storeTasks = Object.values(this._store.getItems());
-      return this._api.sync(storeTasks)
+      const storePoints = Object.values(this._store.getItems());
+      return this._api.sync(storePoints)
         .then((response) => {
           const createdPoints = getSyncedPoints(response.created);
           const updatedPoints = getSyncedPoints(response.updated);

@@ -56,6 +56,10 @@ const MENU_ITEMS = [
   },
 ];
 
+const STORE_PREFIX = `bigtrip-localstorage`;
+const STORE_VER = `v1`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
 const TRANSFER_TYPES = [
   `taxi`,
   `bus`,
@@ -81,6 +85,7 @@ export {
   DESTINATION_UKNOWN,
   FILTERS,
   MENU_ITEMS,
+  STORE_NAME,
   TRANSFER_TYPES,
   URL,
 };
