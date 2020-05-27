@@ -1,18 +1,23 @@
 import {FilterType} from "../const.js";
 
-export const getPointsByFilter = (points, filterType) => {
+const getPointsByFilter = (points, filterType) => {
   switch (filterType) {
     case FilterType.EVERYTHING:
-      return points.sort((a, b) => a.startDate - b.startDate);
+      points = points.sort((a, b) => a.startDate - b.startDate);
+      break;
     case FilterType.FUTURE:
-      return points
+      points = points
       .filter((point) => point.endDate > new Date())
       .sort((a, b) => a.startDate - b.startDate);
+      break;
     case FilterType.PAST:
-      return points
+      points = points
       .filter((point) => point.endDate < new Date())
       .sort((a, b) => a.startDate - b.startDate);
+      break;
   }
 
   return points;
 };
+
+export {getPointsByFilter};

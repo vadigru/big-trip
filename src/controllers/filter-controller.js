@@ -18,7 +18,6 @@ export default class FilterController {
         name: filterType,
         checked: filterType === this._activeFilterType,
         disabled: this._pointsModel.getPoints(filterType).length === 0
-
       };
     });
     const oldComponent = this._filterComponent;

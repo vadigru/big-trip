@@ -1,7 +1,7 @@
 import AbstractSmartComponent from './abstract-smart-component.js';
-import Chart from "chart.js";
+import Chart from 'chart.js';
 import chartjsPluginDatalabels from 'chartjs-plugin-datalabels';
-import moment from "moment";
+import moment from 'moment';
 
 const ChartIconToPretext = {
   "taxi": `in`,
@@ -51,6 +51,7 @@ const generateChartsData = (points) => {
     transport: 0,
     drive: 0
   };
+
   const timeStatictics = {};
 
   points.forEach((point) => {
@@ -94,10 +95,12 @@ const generateChartsData = (points) => {
     .map((item) => {
       return [
         `${emojiMap[item[0]]} ${ChartIconToPretext[item[0]].toUpperCase()} ${item[0].toUpperCase()}`,
-        Math.round(moment.duration(item[1], `milliseconds`).asHours())
+        moment.duration(item[1], `milliseconds`).asMinutes() >= 60
+          ? Math.round(moment.duration(item[1], `milliseconds`).asHours())
+          : (moment.duration(item[1], `milliseconds`).asMinutes() / 100)
+
       ];
-    })
-    .filter((item) => item[1] !== 0);
+    });
 
   return {
     moneyData,
@@ -189,12 +192,10 @@ const renderChart = (ctx, data, label, legend, isLabelPositonLeft = false) => {
 export default class Statistics extends AbstractSmartComponent {
   constructor(pointsModel) {
     super();
-
     this._pointsModel = pointsModel;
     this._moneyChart = null;
     this._transportChart = null;
     this._timeChart = null;
-
     this._renderCharts();
   }
 
@@ -229,9 +230,9 @@ export default class Statistics extends AbstractSmartComponent {
   _renderCharts() {
     const element = this.getElement();
 
-    const moneyCtx = element.querySelector(`.statistics__chart--money`);
-    const transportCtx = element.querySelector(`.statistics__chart--transport`);
-    const timeCtx = element.querySelector(`.statistics__chart--time`);
+    const moneyCtxElement = element.querySelector(`.statistics__chart--money`);
+    const transportCtxElement = element.querySelector(`.statistics__chart--transport`);
+    const timeCtxElement = element.querySelector(`.statistics__chart--time`);
 
     this._resetCharts();
     const points = this._pointsModel.getPoints();
@@ -240,20 +241,20 @@ export default class Statistics extends AbstractSmartComponent {
     );
 
     this._moneyChart = renderChart(
-        moneyCtx,
+        moneyCtxElement,
         moneyData,
         LabelPrefix.EURO,
         LegendName.MONEY,
         true
     );
     this._transportChart = renderChart(
-        transportCtx,
+        transportCtxElement,
         transportData,
         LabelPrefix.TIMES,
         LegendName.TRANSPORT
     );
     this._timeChart = renderChart(
-        timeCtx,
+        timeCtxElement,
         timeData,
         LabelPrefix.HOURS,
         LegendName.TIME

@@ -1,8 +1,14 @@
-import Point from './models/point.js';
+import Point from '../models/point.js';
+import {URL} from '../const';
 
 const AccessData = {
   END_POINT: `https://11.ecmascript.pages.academy/big-trip`,
-  AUTHORIZATION: `Basic &&jUjUjk$kl3Eddj=`
+  AUTHORIZATION: `Basic &&jUjUEfK7%kl3Eddj=`
+};
+
+const HttpCode = {
+  SUCCESS: 200,
+  REDIRECTION: 300
 };
 
 const Method = {
@@ -13,47 +19,38 @@ const Method = {
 };
 
 const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (response.status >= HttpCode.SUCCESS && response.status < HttpCode.REDIRECTION) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
   }
 };
+
 export default class API {
   constructor() {
     this._endPoint = AccessData.END_POINT;
     this._authorization = AccessData.AUTHORIZATION;
   }
 
-  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
-    headers.append(`Authorization`, this._authorization);
-
-    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(checkStatus)
-      .catch((err) => {
-        throw err;
-      });
-  }
-
   getPoints() {
-    return this._load({url: `points`})
+    return this._load({url: URL.POINTS})
       .then((response) => response.json())
       .then(Point.parsePoints);
   }
 
   getOffers() {
-    return this._load({url: `offers`})
+    return this._load({url: URL.OFFERS})
     .then((response) => response.json());
   }
 
   getDestinations() {
-    return this._load({url: `destinations`})
+    return this._load({url: URL.DESTINATIONS})
     .then((response) => response.json());
   }
 
   updatePoint(id, data) {
     return this._load({
-      url: `points/${id}`,
+      url: `${URL.POINTS}/${id}`,
       method: Method.PUT,
       body: JSON.stringify(data.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
@@ -64,7 +61,7 @@ export default class API {
 
   createPoint(point) {
     return this._load({
-      url: `points`,
+      url: URL.POINTS,
       method: Method.POST,
       body: JSON.stringify(point.toRAW()),
       headers: new Headers({"Content-Type": `application/json`})
@@ -74,6 +71,26 @@ export default class API {
   }
 
   deletePoint(id) {
-    return this._load({url: `points/${id}`, method: Method.DELETE});
+    return this._load({url: `${URL.POINTS}/${id}`, method: Method.DELETE});
+  }
+
+  sync(data) {
+    return this._load({
+      url: `${URL.POINTS}/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then((response) => response.json());
+  }
+
+  _load({url, method = Method.GET, body = null, headers = new Headers()}) {
+    headers.append(`Authorization`, this._authorization);
+
+    return fetch(`${this._endPoint}/${url}`, {method, body, headers})
+      .then(checkStatus)
+      .catch((err) => {
+        throw err;
+      });
   }
 }

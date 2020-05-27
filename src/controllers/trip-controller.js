@@ -1,17 +1,36 @@
+import NoWaypointComponent from '../components/trip-day-no-points.js';
 import TripInfoComponent from '../components/trip-info.js';
 import TripCostComponent from '../components/trip-cost.js';
-import TripSortComponent from '../components/sort.js';
+import TripSortComponent from '../components/trip-sort.js';
 import TripDayEntryComponent from '../components/trip-day-entry.js';
 import PointController from '../controllers/point-controller.js';
-import NoWaypointComponent from '../components/trip-day-no-points.js';
-import {renderElement, remove, RenderPosition} from '../utils/render.js';
-import {Mode, SortType} from '../const.js';
 import {EmptyPoint} from '../controllers/point-controller.js';
-import {enableComponent, disableComponent, getFullPrice} from '../utils/common.js';
+import {Mode, SortType} from '../const.js';
+import {renderElement, remove, RenderPosition} from '../utils/render.js';
+
+const disableComponent = (className) => {
+  const componentElement = document.querySelector(`.${className}`);
+  if (!componentElement.getAttribute(`disabled`)) {
+    componentElement.setAttribute(`disabled`, `disabled`);
+  }
+};
+
+const enableComponent = (className) => {
+  const componentElement = document.querySelector(`.${className}`);
+  if (componentElement.getAttribute(`disabled`)) {
+    componentElement.removeAttribute(`disabled`);
+  }
+};
+
+const getFullPrice = (arr) => {
+  const totalCostElement = document.querySelector(`.trip-info__cost-value`);
+  totalCostElement.textContent = arr.reduce((total, offer) => parseInt(total, 10) + parseInt(offer.price, 10)
+                               + offer.offers.reduce((acc, it) => parseInt(acc, 10) + parseInt(it.price, 10), 0), 0);
+};
 
 const renderTrip = (points, offers, destinations, container, onDataChange, onViewChange, isDefaultSort = true) => {
   const pointControllers = [];
-  let dates = isDefaultSort
+  const dates = isDefaultSort
     ? [...new Set(points.map((it) => new Date(it.startDate).toDateString()))]
     : [``];
 
@@ -33,10 +52,8 @@ const renderTrip = (points, offers, destinations, container, onDataChange, onVie
       pointController.render(point, Mode.DEFAULT);
       pointControllers.push(pointController);
     });
-
     renderElement(container.getElement(), day);
   });
-
   return pointControllers;
 };
 
@@ -45,7 +62,6 @@ export default class TripController {
     this._container = container;
     this._pointsModel = pointsModel;
     this._api = api;
-
     this._newPointControllers = [];
     this._showedPointControllers = [];
     this._sortComponent = new TripSortComponent();
@@ -55,15 +71,11 @@ export default class TripController {
     this._noWaypointComponent = null;
     this._isDefaultSort = null;
     this._filterController = filterController;
-
     this._currentSortType = SortType.DEFAULT;
-
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
-
     this._pointsModel.setFilterChangeHandler(this._onFilterChange);
-
     this._eventElement = document.querySelector(`.trip-events`);
   }
 
@@ -89,19 +101,6 @@ export default class TripController {
     this._sortComponent.show();
   }
 
-  _updatePoints() {
-    this._removePoints();
-    this._showedPointControllers = renderTrip(
-        this._pointsModel.getPoints(),
-        this._pointsModel.getOffers(),
-        this._pointsModel.getDestinations(),
-        this._container,
-        this._onDataChange,
-        this._onViewChange,
-        this._isDefaultSort
-    );
-  }
-
   hide() {
     this._container.hide();
     this._sortComponent.hide();
@@ -114,11 +113,15 @@ export default class TripController {
     this._renderNoWaypoint();
   }
 
-  _removeNoWaypoint() {
-    if (this._noWaypointComponent) {
-      remove(this._noWaypointComponent);
-      this._noWaypointComponent = null;
-    }
+  render() {
+    this._renderInfo();
+    renderElement(this._eventElement, this._sortComponent, RenderPosition.AFTERBEGIN);
+    this._renderNoWaypoint();
+    this._sortComponent.setSortTypeChangeHandler((sortType) => {
+      this._sortPoints(sortType);
+    });
+    this._sortPoints(SortType.DEFAULT);
+    getFullPrice(this._pointsModel.getPointsAll(), this._offersSet);
   }
 
   _renderNoWaypoint() {
@@ -126,6 +129,13 @@ export default class TripController {
       this._noWaypointComponent = new NoWaypointComponent();
       renderElement(this._eventElement, this._noWaypointComponent);
       this._sortComponent.hide();
+    }
+  }
+
+  _removeNoWaypoint() {
+    if (this._noWaypointComponent) {
+      remove(this._noWaypointComponent);
+      this._noWaypointComponent = null;
     }
   }
 
@@ -142,15 +152,79 @@ export default class TripController {
     getFullPrice(this._pointsModel.getPointsAll(), this._offersSet);
   }
 
-  render() {
-    this._renderInfo();
-    renderElement(this._eventElement, this._sortComponent, RenderPosition.AFTERBEGIN);
-    this._renderNoWaypoint();
-    this._sortComponent.setSortTypeChangeHandler((sortType) => {
-      this._sortPoints(sortType);
-    });
-    this._sortPoints(SortType.DEFAULT);
-    getFullPrice(this._pointsModel.getPointsAll(), this._offersSet);
+  _sortPoints(sortType) {
+    let sortedPoints = [];
+    this._isDefaultSort = false;
+
+    let timeDescendingOrder = (a, b) => {
+      const aa = a.endDate - a.startDate;
+      const bb = b.endDate - b.startDate;
+      return bb - aa;
+    };
+
+    let priceDescendingOrder = (a, b) => {
+      return b.price - a.price;
+    };
+
+    let dateAscendingOrder = (a, b) => {
+      return a.startDate - b.startDate;
+    };
+
+    switch (sortType) {
+      case SortType.TIME:
+        sortedPoints = this._pointsModel.getPoints().slice().sort(timeDescendingOrder);
+        break;
+      case SortType.PRICE:
+        sortedPoints = this._pointsModel.getPoints().slice().sort(priceDescendingOrder);
+        break;
+      case SortType.DEFAULT:
+        sortedPoints = this._pointsModel.getPointsAll().slice().sort(dateAscendingOrder);
+        this._isDefaultSort = true;
+        break;
+    }
+
+    this._currentSortType = sortType;
+    this._checkSortType(sortType);
+    this._creatingPoint = null;
+    this._removePoints();
+    this._showedPointControllers = renderTrip(
+        sortedPoints,
+        this._pointsModel.getOffers(),
+        this._pointsModel.getDestinations(),
+        this._container,
+        this._onDataChange,
+        this._onViewChange,
+        this._isDefaultSort
+    );
+    enableComponent(`trip-main__event-add-btn`);
+  }
+
+  _checkSortType(sortType) {
+    const sortElement = document.querySelector(`input[data-sort-type=${sortType}]`);
+    if (sortElement) {
+      sortElement.checked = true;
+    }
+  }
+
+  _updatePoints() {
+    this._removePoints();
+    this._showedPointControllers = renderTrip(
+        this._pointsModel.getPoints(),
+        this._pointsModel.getOffers(),
+        this._pointsModel.getDestinations(),
+        this._container,
+        this._onDataChange,
+        this._onViewChange,
+        this._isDefaultSort
+    );
+  }
+
+  _removePoints() {
+    this._container.getElement().innerHTML = ``;
+    this._showedPointControllers.forEach((pointController) =>
+      pointController.destroy()
+    );
+    this._showedPointControllers = [];
   }
 
   _onDataChange(pointController, oldPoint, newPoint) {
@@ -200,59 +274,13 @@ export default class TripController {
     enableComponent(`trip-main__event-add-btn`);
   }
 
-  _sortPoints(sortType) {
-    let sortedPoints = [];
-    switch (sortType) {
-      case SortType.TIME:
-        sortedPoints = this._pointsModel.getPoints().slice().sort((a, b) => {
-          const aa = a.endDate - a.startDate;
-          const bb = b.endDate - b.startDate;
-          return bb - aa;
-        });
-        this._isDefaultSort = false;
-        this._currentSortType = sortType;
-        break;
-      case SortType.PRICE:
-        sortedPoints = this._pointsModel.getPoints().slice().sort((a, b) => b.price - a.price);
-        this._isDefaultSort = false;
-        this._currentSortType = sortType;
-        break;
-      case SortType.DEFAULT:
-        sortedPoints = this._pointsModel.getPoints().slice().sort((a, b) => a.startDate - b.startDate);
-        this._isDefaultSort = true;
-        this._currentSortType = sortType;
-        break;
-    }
-
-    this._checkSortType(sortType);
-    this._creatingPoint = null;
-    this._removePoints();
-    this._showedPointControllers = renderTrip(
-        sortedPoints,
-        this._pointsModel.getOffers(),
-        this._pointsModel.getDestinations(),
-        this._container,
-        this._onDataChange,
-        this._onViewChange,
-        this._isDefaultSort
-    );
-    enableComponent(`trip-main__event-add-btn`);
-  }
-
-  _checkSortType(sortType) {
-    const sortElement = document.querySelector(`input[data-sort-type=${sortType}]`);
-    if (sortElement) {
-      sortElement.checked = true;
-    }
-  }
-
   _onViewChange() {
     if (this._creatingPoint) {
       this._creatingPoint.destroy();
       this._creatingPoint = null;
       enableComponent(`trip-main__event-add-btn`);
     }
-    this._showedPointControllers.forEach((it) => it.setDefaultView());
+    this._showedPointControllers.forEach((point) => point.setDefaultView());
   }
 
   _onFilterChange() {
@@ -262,13 +290,5 @@ export default class TripController {
     this._sortComponent.setSortType(this._currentSortType);
     this._checkSortType(this._currentSortType);
     this._sortPoints(this._currentSortType);
-  }
-
-  _removePoints() {
-    this._container.getElement().innerHTML = ``;
-    this._showedPointControllers.forEach((pointController) =>
-      pointController.destroy()
-    );
-    this._showedPointControllers = [];
   }
 }

@@ -73,13 +73,10 @@ export default class TripSort extends AbstractComponent {
       if (evt.target.tagName !== `INPUT`) {
         return;
       }
-
       const sortType = evt.target.dataset.sortType;
-
       if (this._currentSortType === sortType) {
         return;
       }
-
       this._currentSortType = sortType;
       handler(this._currentSortType);
     });
