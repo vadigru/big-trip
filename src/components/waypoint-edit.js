@@ -337,10 +337,7 @@ export default class WaypointEdit extends AbstractSmartComponent {
     this._flatpickrEnd = flatpickr(endDateElement,
         Object.assign({}, flatpickrOpt, {
           defaultDate: this._endDate || `today`,
-          minDate: this._endDate || `today`,
-          onChange(selectedDates) {
-            self._flatpickrStart.set(`maxDate`, selectedDates[0]);
-          },
+          minDate: this._startDate || `today`,
         })
     );
   }

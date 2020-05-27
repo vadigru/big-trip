@@ -11,6 +11,7 @@ self.addEventListener(`install`, (evt) => {
           `/index.html`,
           `/bundle.js`,
           `/css/style.css`,
+          `https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700,800&display=swap`,
           `/img/logo.png`,
           `/img/header-bg.png`,
           `/img/header-bg@2x.png`,

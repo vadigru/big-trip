@@ -26,7 +26,6 @@ const parseFormData = (formData, destination, id) => {
   const checkedOffers = [
     ...document.querySelectorAll(`.event__offer-checkbox:checked + label[for^="event"]`)
   ];
-
   return new Point({
     "id": id,
     "type": formData.get(`event-type`),

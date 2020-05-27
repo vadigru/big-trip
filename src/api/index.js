@@ -1,9 +1,9 @@
 import Point from '../models/point.js';
-import {URL} from '../const';
+import {URL} from '../const.js';
 
 const AccessData = {
   END_POINT: `https://11.ecmascript.pages.academy/big-trip`,
-  AUTHORIZATION: `Basic &&jUjUEfK7%kl3Eddj=`
+  AUTHORIZATION: `Basic &&jUjUEfK4Hjkl3Eddj=`
 };
 
 const HttpCode = {
@@ -86,7 +86,6 @@ export default class API {
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
-
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
       .then(checkStatus)
       .catch((err) => {

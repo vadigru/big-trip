@@ -178,7 +178,7 @@ export default class TripController {
         sortedPoints = this._pointsModel.getPoints().slice().sort(priceDescendingOrder);
         break;
       case SortType.DEFAULT:
-        sortedPoints = this._pointsModel.getPointsAll().slice().sort(dateAscendingOrder);
+        sortedPoints = this._pointsModel.getPoints().slice().sort(dateAscendingOrder);
         this._isDefaultSort = true;
         break;
     }
