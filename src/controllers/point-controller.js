@@ -4,7 +4,6 @@ import Point from "../models/point.js";
 import {renderElement, replaceElement, remove, RenderPosition} from '../utils/render.js';
 import {Mode} from '../const.js';
 import moment from 'moment';
-import {encode} from 'he';
 
 const SHAKE_ANIMATION_TIMEOUT = 600;
 
@@ -31,10 +30,10 @@ const parseFormData = (formData, destination, id) => {
     "type": formData.get(`event-type`),
     "date_from": moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
     "date_to": moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
-    "base_price": parseInt(encode(formData.get(`event-price`)), 10),
+    "base_price": parseInt(formData.get(`event-price`), 10),
     "offers": checkedOffers.map((offer) => ({
       "title": offer.querySelector(`.event__offer-title`).textContent,
-      "price": Number(offer.querySelector(`.event__offer-price`).textContent)
+      "price": parseInt(offer.querySelector(`.event__offer-price`).textContent, 10)
     })),
     "destination": {
       "description": destination[cityElement].description,

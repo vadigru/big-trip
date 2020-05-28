@@ -25,12 +25,12 @@ const tripDaysComponent = new TripDaysComponent();
 const filterController = new FilterController(menuElement, pointsModel);
 const statisticsComponent = new StatisticsComponent(pointsModel);
 const tripController = new TripController(tripDaysComponent, pointsModel, apiWithProvider, filterController);
-let tripPointsLoading = new TripPointsLoadind();
+const tripPointsLoading = new TripPointsLoadind();
 
 renderElement(menuElement, menuComponent);
 renderElement(eventElement, tripDaysComponent);
 renderElement(headerElement, new TripMainInfoComponent(), RenderPosition.AFTERBEGIN);
-renderElement(eventElement, statisticsComponent, RenderPosition.BEFOREEND);
+renderElement(eventElement, statisticsComponent);
 renderElement(eventElement, tripPointsLoading);
 
 statisticsComponent.hide();
@@ -52,20 +52,20 @@ menuComponent.setChangeHandler((menuItem) => {
   switch (menuItem) {
     case MenuItem.TABLE:
       menuComponent.setSelectedItem(MenuItem.TABLE);
-      statisticsComponent.hide();
-      tripController.show();
-      if (tripPointsLoading && tripController._noWaypointComponent) {
-        remove(tripController._noWaypointComponent);
-        renderElement(eventElement, tripPointsLoading);
+      if (tripPointsLoading) {
+        statisticsComponent.hide();
+        tripPointsLoading.show();
+      }
+      if (tripPointsLoading._element === null && !tripController._noWaypointComponent) {
+        statisticsComponent.hide();
+        tripController.show();
       }
       break;
     case MenuItem.STATS:
       menuComponent.setSelectedItem(MenuItem.STATS);
       statisticsComponent.show();
       tripController.hide();
-      if (tripPointsLoading) {
-        remove(tripPointsLoading);
-      }
+      tripPointsLoading.hide();
       break;
   }
 });
@@ -79,7 +79,6 @@ Promise.all([
   pointsModel.setOffers(offers);
   pointsModel.setDestinations(destinations);
   remove(tripPointsLoading);
-  tripPointsLoading = null;
   tripController.render();
   filterController.render();
   newPointElement.disabled = false;

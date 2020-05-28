@@ -56,9 +56,9 @@ const generateChartsData = (points) => {
 
   points.forEach((point) => {
     if (point.type in moneyStatistics) {
-      moneyStatistics[point.type] += Number(point.price);
+      moneyStatistics[point.type] += parseInt(point.price, 10);
     } else {
-      moneyStatistics[point.type] = Number(point.price);
+      moneyStatistics[point.type] = parseInt(point.price, 10);
     }
 
     if (point.type in transportStatistics) {

@@ -156,17 +156,17 @@ export default class TripController {
     let sortedPoints = [];
     this._isDefaultSort = false;
 
-    let timeDescendingOrder = (a, b) => {
+    const timeDescendingOrder = (a, b) => {
       const aa = a.endDate - a.startDate;
       const bb = b.endDate - b.startDate;
       return bb - aa;
     };
 
-    let priceDescendingOrder = (a, b) => {
+    const priceDescendingOrder = (a, b) => {
       return b.price - a.price;
     };
 
-    let dateAscendingOrder = (a, b) => {
+    const dateAscendingOrder = (a, b) => {
       return a.startDate - b.startDate;
     };
 
@@ -286,6 +286,7 @@ export default class TripController {
   _onFilterChange() {
     enableComponent(`trip-main__event-add-btn`);
     this._creatingPoint = null;
+    this._filterController.render();
     this._updatePoints();
     this._sortComponent.setSortType(this._currentSortType);
     this._checkSortType(this._currentSortType);

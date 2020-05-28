@@ -4,16 +4,14 @@ import {TRANSFER_TYPES} from '../const.js';
 
 const getDateDiff = (startDate, endDate) => {
   const days = Math.floor(((endDate - startDate) / 86400000));
-  let hours = endDate - startDate > 0 ? 0 : 24;
-  hours += Math.floor(((endDate - startDate) % 86400000) / 3600000);
-  let minutes = endDate - startDate > 0 ? 0 : 60;
-  minutes += Math.round((((endDate - startDate) % 86400000) % 3600000) / 60000);
+  const hours = Math.floor(((endDate - startDate) % 86400000) / 3600000);
+  const minutes = Math.round((((endDate - startDate) % 86400000) % 3600000) / 60000);
 
   const addZero = (value) => value < 10 ? `0${value}` : `${value}`;
 
-  const daysOutput = parseInt(days, 10) !== 0 ? `${addZero(days)}D ` : ``;
-  const hoursOutput = parseInt(hours, 10) !== 0 ? `${addZero(hours)}H ` : ``;
-  const minutesOutput = parseInt(minutes, 10) !== 0 ? `${addZero(minutes)}M ` : ``;
+  const daysOutput = days !== 0 ? `${addZero(days)}D ` : ``;
+  const hoursOutput = hours !== 0 ? `${addZero(hours)}H ` : ``;
+  const minutesOutput = minutes !== 0 ? `${addZero(minutes)}M ` : ``;
 
   return daysOutput + hoursOutput + minutesOutput;
 };

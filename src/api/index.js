@@ -3,7 +3,7 @@ import {URL} from '../const.js';
 
 const AccessData = {
   END_POINT: `https://11.ecmascript.pages.academy/big-trip`,
-  AUTHORIZATION: `Basic &&jUjUEfK4Hjkl3Eddj=`
+  AUTHORIZATION: `Basic &&jUjUEfTg$4Hjkl3Eddj=`
 };
 
 const HttpCode = {
@@ -21,9 +21,8 @@ const Method = {
 const checkStatus = (response) => {
   if (response.status >= HttpCode.SUCCESS && response.status < HttpCode.REDIRECTION) {
     return response;
-  } else {
-    throw new Error(`${response.status}: ${response.statusText}`);
   }
+  throw new Error(`${response.status}: ${response.statusText}`);
 };
 
 export default class API {

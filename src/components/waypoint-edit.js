@@ -245,16 +245,17 @@ export default class WaypointEdit extends AbstractSmartComponent {
   }
 
   setSubmitClickHandler(handler) {
-    const form = this._mode === Mode.ADDING
+    const formElement = this._mode === Mode.ADDING
       ? this.getElement()
       : this.getElement().querySelector(`form`);
+    const checkboxElement = formElement.querySelector(`.event__favorite-checkbox`);
 
-    if (this.getElement().querySelector(`.event__favorite-checkbox`)) {
-      form.querySelector(`.event__favorite-checkbox`).addEventListener(`click`, (evt) => {
+    if (checkboxElement) {
+      checkboxElement.addEventListener(`click`, (evt) => {
         handler(evt);
       });
     }
-    form.addEventListener(`submit`, handler);
+    formElement.addEventListener(`submit`, handler);
     this._validate();
     this._submitClickHandler = handler;
   }
@@ -273,8 +274,8 @@ export default class WaypointEdit extends AbstractSmartComponent {
   }
 
   getData() {
-    const form = this.getElement().querySelector(`form`);
-    const formData = new FormData(form);
+    const formElement = this.getElement().querySelector(`form`);
+    const formData = new FormData(formElement);
 
     return formData;
   }
