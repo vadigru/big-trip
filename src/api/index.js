@@ -2,7 +2,7 @@ import Point from '../models/point.js';
 import {URL} from '../const.js';
 
 const AccessData = {
-  END_POINT: `https://11.ecmascript.pages.academy/big-trip`,
+  END_POINT: `https://13.ecmascript.pages.academy/big-trip`,
   AUTHORIZATION: `Basic &&jUjUEfTg$4Hjkl3Eddj=`
 };
 
